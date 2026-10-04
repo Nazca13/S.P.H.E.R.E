@@ -2,7 +2,7 @@
 PRODUCT REQUIREMENT DOCUMENT (PRD)
 PULSEHQ — ENTERPRISE SOCIAL MEDIA MONITORING & STRATEGIC INTELLIGENCE PLATFORM
 ================================================================================
-Spec Grade: Tier-1 Enterprise ($500K Benchmark Spec)
+Spec Grade: Tier-1 Enterprise 
 Version   : 2.4.0 (Production Release)
 Status    : Approved / Fully Implemented
 Author    : Enterprise Social Media Monitoring Core Engineering Team
