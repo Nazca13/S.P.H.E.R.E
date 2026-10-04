@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PULSEHQ — ENTITY NETWORK GRAPH DATA
+   S.P.H.E.R.E — ENTITY NETWORK GRAPH DATA
    Influencers, Platforms, and Intent/Concept Nodes
    ========================================================================== */
 

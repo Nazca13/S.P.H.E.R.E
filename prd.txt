@@ -1,20 +1,20 @@
 ================================================================================
 PRODUCT REQUIREMENT DOCUMENT (PRD)
-PULSEHQ — ENTERPRISE SOCIAL MEDIA MONITORING & STRATEGIC INTELLIGENCE PLATFORM
+S.P.H.E.R.E — SOCIAL PROFILING & HEURISTIC EVALUATION REPORTING ENGINE
 ================================================================================
-Spec Grade: Tier-1 Enterprise 
-Version   : 2.4.0 (Production Release)
+Spec Grade: Tier-1 Enterprise (MI6 / FBI Grade Super OSINT Suite)
+Version   : 5.0.0 (Production Release)
 Status    : Approved / Fully Implemented
-Author    : Enterprise Social Media Monitoring Core Engineering Team
-Workspace : Nazca13/PulseHQ
+Author    : Strategic Cyber Reconnaissance & OSINT Engineering Team
+Workspace : Nazca13/SPHERE
 
 --------------------------------------------------------------------------------
 1. EXECUTIVE SUMMARY & PRODUCT VISION
 --------------------------------------------------------------------------------
-PulseHQ is a high-density, industrial dark mode Enterprise Social Media 
-Monitoring and Strategic Intelligence Platform designed for Network Operations 
-Centers (NOC), Cyber Reconnaissance Analysts, Government PR Taskforces, and C-Suite 
-Executives.
+S.P.H.E.R.E (Social Profiling & Heuristic Evaluation Reporting Engine) is an elite, 
+Next.js pitch-black Enterprise Cyber Reconnaissance, OSINT Intelligence, and 
+Perimeter Surveillance Suite built for Network Operations Centers (NOC), MI6/FBI Grade 
+Target Trackers, Government PR Taskforces, and Enterprise Defense Analysts.
 
 The platform provides real-time multi-channel firehose ingestion, NLP aspect-based 
 sentiment analysis, automated buzzer/bot authenticity scoring, cross-platform 
@@ -115,27 +115,39 @@ Primary Key Performance Indicator (KPI) Targets:
 - Feature 9.2: API Key Vault with masked key display, rate-limit indicators, and regeneration actions.
 - Feature 9.3: Role-Based Access Control (RBAC) User Team Management Table.
 
+[MODULE 10: DATA LEAK RADAR & DARK WEB OSINT SUITE]
+- Feature 10.1: Continuous Tor Darknet Scanner and 142 Node Ingestion Stream (Pastebin, Telegram Leak Channels, BreachForums v2).
+- Feature 10.2: OSINT Deep Breach Search Engine querying corporate domains, IP subnets, NIK, and leaked credential hashes.
+- Feature 10.3: Automated Key Revocation and Cloudflare WAF Quarantine Gateway Dispatch for exposed API secrets.
+- Feature 10.4: Exposed Data Classification Pie/Donut Chart breakdown (Passwords, API Keys, Executive PII, Customer DBs).
+
+[MODULE 11: TARGET CCTV RECONNAISSANCE & SPATIAL MATRIX]
+- Feature 11.1: Multi-Channel 6-Tile Live CCTV Canvas Simulation Grid with animated scanlines and crosshairs.
+- Feature 11.2: Real-time License Plate OCR Scanner Feed with automatic target vehicle detection (B 1092 RFS).
+- Feature 11.3: Target Biometric Profile Card displaying facial recognition ID and confidence score (99.4%).
+- Feature 11.4: Digital PTZ (Pan-Tilt-Zoom) Joystick HUD & Thermal IR Vision toggle mode for tactical night vision.
+
 --------------------------------------------------------------------------------
 4. NON-FUNCTIONAL & TECHNICAL REQUIREMENTS
 --------------------------------------------------------------------------------
 - Architecture: Pure HTML5, Vanilla CSS Design System, ES6 Javascript Modular Pattern.
-- External Libraries: Chart.js, D3.js v7, Leaflet.js v1.9.4, Phosphor Icons.
-- Design Aesthetic: Industrial Dark NOC Command Room Display (#0d0e12 base, #13151b surface, 
-  #191c24 card, #252836 border). Solid curated color palette with zero gradients.
+- External Libraries: Chart.js, D3.js v7, Leaflet.js v1.9.4, COBE 3D WebGL Globe, Phosphor Icons.
+- Design Aesthetic: Next.js Pitch Black NOC Command Room Display (#000000 pitch black base, #0a0a0c surface, 
+  #121215 card, #27272a border, subtle tech grid overlay). High contrast crisp white typography.
 - Responsiveness: Full multi-breakpoint layout system (1280px, 1024px, 768px, 480px) 
   with dynamic canvas clamp height and horizontal scrolling navigation rail on mobile.
-- Stability Guarantee: Canvas transform reset (setTransform) and D3 force simulation alpha 
-  decay stabilization to prevent frozen or stuck graph states.
+- Stability Guarantee: Canvas transform reset (setTransform), D3 force simulation alpha 
+  decay stabilization, and COBE WebGL render loop cleanup to prevent frozen state or WebGL context loss.
 
 --------------------------------------------------------------------------------
 5. FILE MAPPING
 --------------------------------------------------------------------------------
-- /index.html       : Single Page Application shell containing all 9 views
+- /index.html       : Single Page Application shell containing all 11 views & 3D WebGL Hero Globe
 - /README.md        : Comprehensive Markdown Documentation & System Overview
 - /prd.txt          : Standalone Product Requirement Document (This File)
-- /css/styles.css   : Tier-1 Design System Tokens, Layout Grids, Responsive Breakpoints
+- /css/styles.css   : Next.js Pitch Black Design System Tokens, Layout Grids, Responsive Breakpoints
 - /css/graph.css    : Obsidian Canvas Overlay, HUD Controls, Glassmorphic Drawers
-- /js/dashboard.js  : Application Controller, State Engine, Chart Initializers, D3 Forensic Canvas
+- /js/dashboard.js  : App Controller, State Engine, Charts, D3 Canvas, CCTV Recon & Data Leak Radar
 - /js/graph-engine.js: Entity Network Physics Engine & Canvas 2D Renderer
 - /js/graph-data.js : Enterprise Entity Schemas, Nodes, and Link Network Datasets
 

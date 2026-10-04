@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PULSEHQ — GRAPH ENGINE (TIER-1)
+   S.P.H.E.R.E — GRAPH ENGINE (TIER-1)
    D3.js v7 Force Simulation | Canvas Renderer | HUD Controls | Drawer
    ========================================================================== */
 

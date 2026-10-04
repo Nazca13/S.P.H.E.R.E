@@ -1,5 +1,5 @@
 /* ==========================================================================
-   PULSEHQ — DASHBOARD.JS
+   S.P.H.E.R.E — DASHBOARD.JS
    Command Center Charts, Firehose Feed, KOL List, View Switching
    ========================================================================== */
 
@@ -38,6 +38,10 @@ function switchView(viewId) {
             initAccountInvestigation();
             initAccountInvestigationGlobe();
         }, 60);
+    } else if (viewId === 'view-data-leak-radar') {
+        setTimeout(() => initDataLeakRadar(), 60);
+    } else if (viewId === 'view-cctv-surveillance') {
+        setTimeout(() => initCCTVMatrix(), 60);
     }
 }
 
@@ -837,7 +841,7 @@ function updateReportPreview() {
 }
 
 function triggerReportDownload() {
-    alert('Generating PDF Document... Downloading "PulseHQ_Executive_Report_Indocorp.pdf"');
+    alert('Generating PDF Document... Downloading "SPHERE_Executive_Report_Indocorp.pdf"');
     window.print();
 }
 
@@ -1565,6 +1569,581 @@ window.addEventListener('cobe-ready', () => {
     initDashboardGlobe();
     initAccountInvestigationGlobe();
 });
+
+/* ==========================================================================
+   DATA LEAK RADAR & DARK WEB INTELLIGENCE (FBI/MI6 GRADE OSINT SUITE)
+   ========================================================================== */
+
+let leakTypeChartInstance = null;
+let leakFirehoseInterval = null;
+
+const LEAK_DATASET = [
+    {
+        id: 'L-9842',
+        identity: 'ciso@enterprise-corp.co.id',
+        hash: 'sk_live_98f92a11b7e4... (Stripe Secret Key)',
+        source: 'BreachForums v2 (Auction)',
+        riskScore: 98,
+        riskLevel: 'CRITICAL',
+        status: 'Exposed',
+        date: '2026-10-04 18:42 WIB',
+        domain: 'enterprise-corp.co.id'
+    },
+    {
+        id: 'L-9841',
+        identity: 'admin.db@gov.id',
+        hash: 'SHA256: 8f9b2... (PostgreSQL Superuser Pass)',
+        source: 'RaidForums Leak Dump #409',
+        riskScore: 94,
+        riskLevel: 'CRITICAL',
+        status: 'Exposed',
+        date: '2026-10-04 18:15 WIB',
+        domain: 'gov.id'
+    },
+    {
+        id: 'L-9840',
+        identity: 'dev-aws-root@company-x.com',
+        hash: 'AKIAIOSFODNN7EXAMPLE (AWS Master Access)',
+        source: 'GitHub Public Gist Stealer Log',
+        riskScore: 91,
+        riskLevel: 'CRITICAL',
+        status: 'Quarantined',
+        date: '2026-10-04 17:50 WIB',
+        domain: 'company-x.com'
+    },
+    {
+        id: 'L-9839',
+        identity: 'director.fin@bank-sentral.id',
+        hash: 'NIK 31740928017... + Passport Scan PDF',
+        source: 'Tor Onion Market "X-Leaks"',
+        riskScore: 88,
+        riskLevel: 'HIGH',
+        status: 'Under Watch',
+        date: '2026-10-04 16:30 WIB',
+        domain: 'bank-sentral.id'
+    },
+    {
+        id: 'L-9838',
+        identity: 'lead-sec@telecom-indo.com',
+        hash: 'eyJhbGciOiJIUzI1Ni... (JWT Admin Token)',
+        source: 'Redline Stealer Log Pack 2026',
+        riskScore: 82,
+        riskLevel: 'HIGH',
+        status: 'Revoked',
+        date: '2026-10-04 15:10 WIB',
+        domain: 'telecom-indo.com'
+    },
+    {
+        id: 'L-9837',
+        identity: 'devops-ci@company-x.com',
+        hash: 'ghp_9841Nkasd... (GitHub Personal Token)',
+        source: 'Pastebin Intercept Bot',
+        riskScore: 76,
+        riskLevel: 'MEDIUM',
+        status: 'Revoked',
+        date: '2026-10-04 14:05 WIB',
+        domain: 'company-x.com'
+    },
+    {
+        id: 'L-9836',
+        identity: 'support@brand-official.co.id',
+        hash: '$2a$12$e8F... (Bcrypt Password Hash)',
+        source: 'Exploit.in Darknet Board',
+        riskScore: 72,
+        riskLevel: 'MEDIUM',
+        status: 'Under Watch',
+        date: '2026-10-04 12:44 WIB',
+        domain: 'brand-official.co.id'
+    }
+];
+
+function initDataLeakRadar() {
+    renderLeakRecordsTable(LEAK_DATASET);
+    initLeakTypeChart();
+    startLeakFirehoseFeed();
+}
+
+function renderLeakRecordsTable(records) {
+    const tbody = document.getElementById('leak-records-tbody');
+    const countEl = document.getElementById('leak-results-count');
+    if (!tbody) return;
+
+    if (countEl) {
+        countEl.textContent = `Showing ${records.length} of 14,890 matched records`;
+    }
+
+    if (!records || records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#71717a; padding:24px;">No breach records found matching query.</td></tr>`;
+        return;
+    }
+
+    let html = '';
+    records.forEach(r => {
+        let badgeStyle = 'background:rgba(239, 68, 68, 0.15); color:#ef4444; border:1px solid #ef4444;';
+        if (r.riskLevel === 'HIGH') {
+            badgeStyle = 'background:rgba(245, 158, 11, 0.15); color:#f59e0b; border:1px solid #f59e0b;';
+        } else if (r.riskLevel === 'MEDIUM') {
+            badgeStyle = 'background:rgba(56, 189, 248, 0.15); color:#38bdf8; border:1px solid #38bdf8;';
+        }
+
+        html += `
+        <tr style="border-bottom: 1px solid #18181b;">
+            <td>
+                <div style="font-weight:700; color:#ffffff;">${r.identity}</div>
+                <div style="font-size:10px; color:#71717a;">${r.date}</div>
+            </td>
+            <td>
+                <div style="font-family:monospace; color:#38bdf8; font-size:11px;">${r.hash}</div>
+                <div style="font-size:10px; color:#a1a1aa;">ID: ${r.id}</div>
+            </td>
+            <td>
+                <div style="color:#e4e4e7; font-size:11px;">${r.source}</div>
+                <div style="font-size:10px; color:#10b981;"><i class="ph ph-shield-check"></i> Darknet Indexer Verified</div>
+            </td>
+            <td>
+                <span class="tag" style="${badgeStyle} font-weight:800; font-size:10px;">
+                    ${r.riskLevel} (${r.riskScore})
+                </span>
+            </td>
+            <td>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-ghost" style="padding:4px 8px; font-size:10px; border-color:#ef4444; color:#ef4444;" onclick="alert('Auto-Revoke command sent to Identity Provider for ${r.identity}')"><i class="ph ph-key"></i> Revoke</button>
+                    <button class="btn-ghost" style="padding:4px 8px; font-size:10px;" onclick="alert('Quarantine Rule dispatched to Cloudflare WAF & Gatekeeper!')"><i class="ph ph-shield-warning"></i> Block</button>
+                </div>
+            </td>
+        </tr>
+        `;
+    });
+
+    tbody.innerHTML = html;
+}
+
+function initLeakTypeChart() {
+    const ctx = document.getElementById('leakTypeChart');
+    if (!ctx || leakTypeChartInstance) return;
+
+    leakTypeChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Corporate Passwords', 'API Keys & Secrets', 'Executive PII / Passports', 'Customer DB Scans'],
+            datasets: [{
+                data: [45, 25, 18, 12],
+                backgroundColor: ['#ef4444', '#f59e0b', '#38bdf8', '#10b981'],
+                borderColor: '#000000',
+                borderWidth: 3,
+                hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '72%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return ` ${context.label}: ${context.raw}%`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function startLeakFirehoseFeed() {
+    const feed = document.getElementById('leak-firehose-feed');
+    if (!feed) return;
+
+    if (leakFirehoseInterval) clearInterval(leakFirehoseInterval);
+
+    const MOCK_FIREHOSE_ITEMS = [
+        { title: 'TOR INTERCEPT #9401', desc: 'Matched AWS Secret Access Key: AKIA94... in Stealer Log Pack (Raccoon v2)', sub: 'Vector: Telegram Channel @DarkLogs_Indo · Target: company-x.com', onion: 'xk29a...onion', color: '#ef4444' },
+        { title: 'PASTEBIN SNIFFER #9402', desc: 'Exposed SQL Database Connection String (MySQL root:P@ssw0rd2026)', sub: 'Vector: Pastebin Dump #901 · Target: db.gov.id', onion: 'pastebin.com/raw/901', color: '#f59e0b' },
+        { title: 'BREACHFORUMS AUCTION #9403', desc: 'Executive NIK 3174... & E-KTP Scans put up for auction (2.4 BTC reserve)', sub: 'Vector: BreachForums v2 Thread #4910 · Target: bank-sentral.id', onion: 'bf2onion...onion', color: '#ef4444' },
+        { title: 'DARKNET MARKET RECON #9404', desc: 'Corporate Email Credential Pair (admin@telecom-indo.com:Hash$92)', sub: 'Vector: Genesis Market Bot Log · Target: telecom-indo.com', onion: 'genmark...onion', color: '#38bdf8' },
+        { title: 'AUTO-TAKEDOWN ACK #9405', desc: 'Stripe Secret Key sk_live_89f... auto-revoked via API Hook', sub: 'Status: SLA < 2 mins · Provider: Stripe API Takedown Bot', onion: 'Internal Gateway', color: '#10b981' }
+    ];
+
+    // Populate initial items
+    let initialHtml = '';
+    MOCK_FIREHOSE_ITEMS.slice(0, 4).forEach(item => {
+        initialHtml += createLeakFeedItemHtml(item);
+    });
+    feed.innerHTML = initialHtml;
+
+    // Stream new items periodically
+    let feedIndex = 0;
+    leakFirehoseInterval = setInterval(() => {
+        const item = MOCK_FIREHOSE_ITEMS[feedIndex % MOCK_FIREHOSE_ITEMS.length];
+        feedIndex++;
+
+        const itemEl = document.createElement('div');
+        itemEl.innerHTML = createLeakFeedItemHtml(item);
+        const child = itemEl.firstElementChild;
+        child.style.opacity = '0';
+        child.style.transform = 'translateY(-10px)';
+        child.style.transition = 'all 0.4s ease';
+
+        feed.insertBefore(child, feed.firstChild);
+
+        setTimeout(() => {
+            child.style.opacity = '1';
+            child.style.transform = 'translateY(0)';
+        }, 30);
+
+        if (feed.children.length > 12) {
+            feed.removeChild(feed.lastChild);
+        }
+    }, 4000);
+}
+
+function createLeakFeedItemHtml(item) {
+    return `
+    <div class="feed-item" style="border-left: 3px solid ${item.color}; background: #0a0a0c; margin-bottom: 8px; padding: 10px 14px; border-radius: 4px; border-top:1px solid #1f1f24; border-right:1px solid #1f1f24; border-bottom:1px solid #1f1f24;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-size:11px; font-weight:800; color:${item.color};"><i class="ph ph-warning-circle"></i> ${item.title}</span>
+            <span style="font-size:10px; color:#71717a;">Just now · Node: ${item.onion}</span>
+        </div>
+        <div style="font-size:12px; color:#ffffff; font-family:monospace; margin-bottom:2px;">${item.desc}</div>
+        <div style="font-size:11px; color:#a1a1aa;">${item.sub}</div>
+    </div>
+    `;
+}
+
+function executeLeakSearch() {
+    const input = document.getElementById('leak-search-input');
+    const query = input ? input.value.trim().toLowerCase() : '';
+
+    if (!query) {
+        renderLeakRecordsTable(LEAK_DATASET);
+        return;
+    }
+
+    const filtered = LEAK_DATASET.filter(r => 
+        r.identity.toLowerCase().includes(query) ||
+        r.hash.toLowerCase().includes(query) ||
+        r.domain.toLowerCase().includes(query) ||
+        r.source.toLowerCase().includes(query) ||
+        r.id.toLowerCase().includes(query)
+    );
+
+    renderLeakRecordsTable(filtered);
+}
+
+function triggerLeakScan() {
+    alert('Deep Dark Web OSINT Scan launched across 142 Tor Nodes, BreachForums v2, Telegram Channels, and Pastebin Sniffers!\n\nScan completed in 1.4 seconds. 0 new critical leaks detected.');
+}
+
+function revokeLeakedKeys() {
+    const credsEl = document.getElementById('kpi-leak-creds');
+    const keysEl = document.getElementById('kpi-leak-keys');
+    if (credsEl) credsEl.textContent = '0 Active';
+    if (keysEl) keysEl.textContent = '0 Keys Exposed';
+    
+    alert('Auto-Revoke Protocol executed!\n\n- 48 AWS & Stripe Secret Keys Revoked via API Hooks.\n- 1,240 Passwords forced reset via Enterprise IdP.\n- Quarantine rules active on Gatekeeper WAF.');
+}
+
+/* ==========================================================================
+   TARGET CCTV RECONNAISSANCE & PERIMETER MATRIX ENGINE
+   ========================================================================== */
+
+let cctvAnimFrameId = null;
+let cctvOCRInterval = null;
+const cctvThermalState = {
+    'cctv-canvas-1': false,
+    'cctv-canvas-2': false,
+    'cctv-canvas-3': true,
+    'cctv-canvas-4': false,
+    'cctv-canvas-5': false,
+    'cctv-canvas-6': false
+};
+
+const cctvTileConfigs = [
+    { id: 'cctv-canvas-1', title: 'CAM 01 · HQ Main Lobby', targetLocked: true, boxType: 'FACE_TARGET', speed: 0.8 },
+    { id: 'cctv-canvas-2', title: 'CAM 02 · Sudirman Flyover', targetLocked: true, boxType: 'VEHICLE_PLATE', speed: 1.4 },
+    { id: 'cctv-canvas-3', title: 'CAM 03 · Monas Gate 1', targetLocked: false, boxType: 'THERMAL_GRID', speed: 0.6 },
+    { id: 'cctv-canvas-4', title: 'CAM 04 · SCBD Tower 2', targetLocked: false, boxType: 'PEDESTRIAN_MULTI', speed: 0.9 },
+    { id: 'cctv-canvas-5', title: 'CAM 05 · Kuningan Underpass', targetLocked: false, boxType: 'RADAR_TRAFFIC', speed: 1.8 },
+    { id: 'cctv-canvas-6', title: 'CAM 06 · Airport T3 Gate 4', targetLocked: false, boxType: 'PERIMETER_SCAN', speed: 0.7 }
+];
+
+function initCCTVMatrix() {
+    startCCTVRenderLoop();
+    startCCTVPlateStream();
+}
+
+function startCCTVRenderLoop() {
+    if (cctvAnimFrameId) cancelAnimationFrame(cctvAnimFrameId);
+
+    let frameCount = 0;
+
+    function renderFrame() {
+        frameCount++;
+
+        cctvTileConfigs.forEach((cfg, idx) => {
+            const canvas = document.getElementById(cfg.id);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            const isThermal = cctvThermalState[cfg.id];
+
+            // 1. Latar Belakang Digital Video Feed
+            if (isThermal) {
+                ctx.fillStyle = '#021814';
+                ctx.fillRect(0, 0, w, h);
+            } else {
+                ctx.fillStyle = '#05070a';
+                ctx.fillRect(0, 0, w, h);
+            }
+
+            // 2. Tech Grid Lines & Scanlines
+            ctx.strokeStyle = isThermal ? 'rgba(16, 185, 129, 0.12)' : 'rgba(56, 189, 248, 0.08)';
+            ctx.lineWidth = 1;
+
+            // Vertical Grid
+            for (let x = 0; x < w; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, h);
+                ctx.stroke();
+            }
+            // Horizontal Grid
+            for (let y = 0; y < h; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(w, y);
+                ctx.stroke();
+            }
+
+            // Moving Scanline
+            const scanY = (frameCount * 2.5) % h;
+            ctx.strokeStyle = isThermal ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.25)';
+            ctx.beginPath();
+            ctx.moveTo(0, scanY);
+            ctx.lineTo(w, scanY);
+            ctx.stroke();
+
+            // 3. Dynamic Bounding Box & Target Overlay Animation
+            const time = frameCount * 0.04 * cfg.speed;
+
+            if (cfg.boxType === 'VEHICLE_PLATE') {
+                const bx = w * 0.35 + Math.sin(time) * 35;
+                const by = h * 0.35 + Math.cos(time * 0.7) * 20;
+                const bw = 140;
+                const bh = 80;
+
+                ctx.fillStyle = isThermal ? 'rgba(16, 185, 129, 0.35)' : 'rgba(30, 41, 59, 0.9)';
+                ctx.beginPath();
+                ctx.roundRect(bx, by, bw, bh, 6);
+                ctx.fill();
+
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(bx - 6, by - 6, bw + 12, bh + 12);
+
+                drawReticleCorners(ctx, bx - 6, by - 6, bw + 12, bh + 12, '#ef4444');
+
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(bx - 6, by - 26, 140, 18);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '800 10px monospace';
+                ctx.fillText('TARGET: B 1092 RFS', bx - 2, by - 13);
+
+            } else if (cfg.boxType === 'FACE_TARGET') {
+                const fx = w * 0.45 + Math.sin(time * 0.8) * 15;
+                const fy = h * 0.25 + Math.cos(time * 0.5) * 10;
+
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(fx, fy, 55, 65);
+                drawReticleCorners(ctx, fx, fy, 55, 65, '#38bdf8');
+
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(fx + 15, fy + 22, 5, 5);
+                ctx.fillRect(fx + 35, fy + 22, 5, 5);
+                ctx.fillRect(fx + 25, fy + 38, 5, 5);
+
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.9)';
+                ctx.fillRect(fx, fy + 68, 85, 16);
+                ctx.fillStyle = '#000000';
+                ctx.font = '800 9px monospace';
+                ctx.fillText('FACE ID: 99.4%', fx + 4, fy + 79);
+
+            } else if (cfg.boxType === 'THERMAL_GRID') {
+                const tx = w * 0.5 + Math.sin(time) * 40;
+                const ty = h * 0.5 + Math.cos(time) * 20;
+
+                const grad = ctx.createRadialGradient(tx, ty, 5, tx, ty, 50);
+                grad.addColorStop(0, 'rgba(239, 68, 68, 0.9)');
+                grad.addColorStop(0.5, 'rgba(245, 158, 11, 0.6)');
+                grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(tx, ty, 50, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.strokeStyle = '#10b981';
+                ctx.setLineDash([4, 4]);
+                ctx.strokeRect(tx - 40, ty - 40, 80, 80);
+                ctx.setLineDash([]);
+
+            } else {
+                const gx = w * 0.2 + (Math.sin(time) + 1) * w * 0.3;
+                const gy = h * 0.4 + Math.cos(time * 1.2) * 15;
+
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(gx, gy, 40, 50);
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = '9px monospace';
+                ctx.fillText('OBJ #' + Math.floor(gx), gx, gy - 4);
+            }
+
+            // 4. Camera HUD Crosshair
+            ctx.strokeStyle = isThermal ? 'rgba(16, 185, 129, 0.4)' : 'rgba(255, 255, 255, 0.25)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(w / 2 - 15, h / 2);
+            ctx.lineTo(w / 2 + 15, h / 2);
+            ctx.moveTo(w / 2, h / 2 - 15);
+            ctx.lineTo(w / 2, h / 2 + 15);
+            ctx.stroke();
+
+            // 5. Update Clock Ticker DOM
+            const clockEl = document.querySelector(`.cctv-clock-${idx + 1}`);
+            if (clockEl) {
+                const now = new Date();
+                clockEl.textContent = now.toTimeString().split(' ')[0] + ' WIB';
+            }
+        });
+
+        cctvAnimFrameId = requestAnimationFrame(renderFrame);
+    }
+
+    renderFrame();
+}
+
+function drawReticleCorners(ctx, x, y, w, h, color) {
+    const len = 10;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+
+    ctx.beginPath(); ctx.moveTo(x, y + len); ctx.lineTo(x, y); ctx.lineTo(x + len, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + w - len, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + len); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, y + h - len); ctx.lineTo(x, y + h); ctx.lineTo(x + len, y + h); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + w - len, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - len); ctx.stroke();
+}
+
+function startCCTVPlateStream() {
+    const streamContainer = document.getElementById('cctv-ocr-stream');
+    if (!streamContainer) return;
+
+    if (cctvOCRInterval) clearInterval(cctvOCRInterval);
+
+    const MOCK_PLATES = [
+        { plate: 'B 1092 RFS', type: 'TARGET MATCH', conf: '99.4%', status: 'ALERT', color: '#ef4444', location: 'CAM-02 Sudirman' },
+        { plate: 'B 4910 SJK', type: 'CIVIL VEHICLE', conf: '98.1%', status: 'PASS', color: '#10b981', location: 'CAM-05 Kuningan' },
+        { plate: 'B 8821 WXY', type: 'TAXI CAB', conf: '97.6%', status: 'PASS', color: '#71717a', location: 'CAM-01 HQ Lobby' },
+        { plate: 'B 1940 PQR', type: 'CARGO TRUCK', conf: '96.8%', status: 'PASS', color: '#71717a', location: 'CAM-03 Monas' },
+        { plate: 'B 1092 RFS', type: 'TARGET MATCH', conf: '99.4%', status: 'RE-LOCKED', color: '#ef4444', location: 'CAM-02 Sudirman' }
+    ];
+
+    let html = '';
+    MOCK_PLATES.slice(0, 4).forEach(item => {
+        html += createPlateLogHtml(item);
+    });
+    streamContainer.innerHTML = html;
+
+    let pIdx = 0;
+    cctvOCRInterval = setInterval(() => {
+        const item = MOCK_PLATES[pIdx % MOCK_PLATES.length];
+        pIdx++;
+
+        const div = document.createElement('div');
+        div.innerHTML = createPlateLogHtml(item);
+        const child = div.firstElementChild;
+        child.style.opacity = '0';
+        child.style.transform = 'translateX(-10px)';
+        child.style.transition = 'all 0.3s ease';
+
+        streamContainer.insertBefore(child, streamContainer.firstChild);
+
+        setTimeout(() => {
+            child.style.opacity = '1';
+            child.style.transform = 'translateX(0)';
+        }, 20);
+
+        if (streamContainer.children.length > 8) {
+            streamContainer.removeChild(streamContainer.lastChild);
+        }
+    }, 2800);
+}
+
+function createPlateLogHtml(item) {
+    return `
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 10px; background:#0a0a0c; border:1px solid #1f1f24; border-radius:4px; border-left:3px solid ${item.color};">
+        <div>
+            <strong style="color:${item.color}; font-family:monospace; font-size:12px;">${item.plate}</strong>
+            <span style="font-size:10px; color:#a1a1aa; margin-left:6px;">${item.location}</span>
+        </div>
+        <div style="font-size:10px; font-weight:800; color:${item.color};">
+            ${item.conf} Match
+        </div>
+    </div>
+    `;
+}
+
+function toggleCamThermal(canvasId) {
+    cctvThermalState[canvasId] = !cctvThermalState[canvasId];
+}
+
+function toggleAllCCTVThermal() {
+    const keys = Object.keys(cctvThermalState);
+    const anyOff = keys.some(k => !cctvThermalState[k]);
+    keys.forEach(k => {
+        cctvThermalState[k] = anyOff;
+    });
+    alert(`Thermal IR Vision Mode ${anyOff ? 'ACTIVATED' : 'DEACTIVATED'} across all 6 camera channels!`);
+}
+
+function triggerCCTVAIRecog() {
+    alert('AI Facial Biometric Scan dispatched across all active camera matrix channels!\n\nSubject #TS-0921 locked on CAM-02 Sudirman Flyover with 99.4% confidence.');
+}
+
+function controlPTZ(action) {
+    alert(`PTZ Control Command [${action}] dispatched to CAM-02 PTZ Servo Head!\nCamera viewport re-aligned to tracking vector.`);
+}
+
+function focusCameraTile(tileId) {
+    const tile = document.getElementById(tileId);
+    if (tile) {
+        tile.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        tile.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.8)';
+        setTimeout(() => {
+            tile.style.boxShadow = 'none';
+        }, 3000);
+    }
+}
+
+// ── Cinematic Splash Screen Handler ──────────────────────────────────────────
+
+function dismissSplash() {
+    const splash = document.getElementById('sphere-splash');
+    if (splash) {
+        splash.classList.add('splash-exit');
+        setTimeout(() => {
+            splash.style.display = 'none';
+        }, 700);
+    }
+}
+
+
+
 
 
 
