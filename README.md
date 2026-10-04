@@ -1,11 +1,11 @@
-# PulseHQ — Enterprise Social Media Monitoring & Strategic Intelligence Platform
+# S.P.H.E.R.E — Social Profiling & Heuristic Evaluation Reporting Engine
 
-[![Tier-1 Enterprise Spec](https://img.shields.io/badge/Spec-Tier--1%20Enterprise%20%28%24500K%20Grade%29-3b82f6?style=for-the-badge&logo=shield)](https://github.com/Nazca13/PulseHQ)
-[![License: Enterprise Proprietary](https://img.shields.io/badge/License-Enterprise%20Proprietary-8b5cf6?style=for-the-badge)](https://github.com/Nazca13/PulseHQ)
-[![Theme: Industrial NOC Dark](https://img.shields.io/badge/Theme-Industrial%20NOC%20Dark-10b981?style=for-the-badge)](https://github.com/Nazca13/PulseHQ)
-[![Interactivity: D3.js + Leaflet + Chart.js](https://img.shields.io/badge/Engine-D3.js%20v7%20%7C%20Leaflet%20%7C%20Chart.js-f43f5e?style=for-the-badge)](https://github.com/Nazca13/PulseHQ)
+[![Tier-1 Enterprise Spec](https://img.shields.io/badge/Spec-Tier--1%20MI6%2FFBI%20Grade%20OSINT-3b82f6?style=for-the-badge&logo=shield)](https://github.com/Nazca13/SPHERE)
+[![License: Enterprise Proprietary](https://img.shields.io/badge/License-Enterprise%20Proprietary-8b5cf6?style=for-the-badge)](https://github.com/Nazca13/SPHERE)
+[![Theme: Next.js Pitch Black](https://img.shields.io/badge/Theme-Next.js%20Pitch%20Black-10b981?style=for-the-badge)](https://github.com/Nazca13/SPHERE)
+[![Engine: COBE 3D WebGL + D3.js + Chart.js](https://img.shields.io/badge/Engine-COBE%203D%20%7C%20D3.js%20v7%20%7C%20Chart.js-f43f5e?style=for-the-badge)](https://github.com/Nazca13/SPHERE)
 
-> **PulseHQ** adalah platform **Enterprise Social Media Intelligence & Cyber Reconnaissance** kelas industri yang dirancang khusus untuk Network Operations Center (NOC), tim Government PR, Brand Reputation Crisis Team, serta Cyber Intelligence Analyst. Platform ini menggabungkan *Real-Time Firehose Streaming*, *NLP Sentiment & Aspect Analysis*, *Cross-Platform Digital Footprint Reconnaissance*, *Buzzer Bot Audit Scoring*, serta *Interactive Force-Directed Entity Graphing*.
+> **S.P.H.E.R.E** (*Social Profiling & Heuristic Evaluation Reporting Engine*) adalah platform **Enterprise Cyber Reconnaissance, OSINT Intelligence & Tactical CCTV Surveillance** kelas MI6/FBI yang dirancang khusus untuk Network Operations Center (NOC), tim Government PR, Brand Defense Taskforces, serta Cyber Intelligence Analyst. Platform ini menggabungkan *Real-Time Firehose Streaming*, *3D WebGL Hero Globe*, *Dark Web Data Leak Radar*, *Target CCTV Reconnaissance Matrix*, *Buzzer Bot Audit Scoring*, serta *Interactive Force-Directed Entity Graphing*.
 
 ---
 
@@ -39,7 +39,7 @@
 
 Dalam lanskap digital kontemporer, serangan opini publik terkoordinasi (kampanye buzzer, disinformasi, botnet farm, serta *black-hat PR*) terjadi dalam hitungan detik. Alat monitoring konvensional sering kali lambat, menyajikan visualisasi standar yang kaku, serta terbatas pada agregasi angka tanpa kemampuan forensik mendalam.
 
-**PulseHQ** hadir sebagai solusi Tier-1 Command Center yang dirancang tanpa kompromi (*Zero AI-Slop Aesthetic*), menghadirkan visualisasi gelap (*Obsidian Industrial Dark Mode*) tingkat tinggi yang teruji untuk pemantauan 24/7 di ruang kendali (NOC display).
+**S.P.H.E.R.E** hadir sebagai solusi Tier-1 Command Center yang dirancang tanpa kompromi (*Zero AI-Slop Aesthetic*), menghadirkan visualisasi gelap (*Next.js Pitch Black Mode*) tingkat tinggi yang teruji untuk pemantauan 24/7 di ruang kendali (NOC display).
 
 ### Keunggulan Utama (Key Differentiators):
 - **Bot & Authenticity Scoring**: Deteksi algoritmis rasio follower/following, *burst-posting patterns*, serta sintesis foto profil berbasis AI (StyleGAN detection).
@@ -61,18 +61,18 @@ Dalam lanskap digital kontemporer, serangan opini publik terkoordinasi (kampanye
   3. Menyediakan antarmuka ultra-responsif, berkerataan data tinggi (*high density*), dan bebas distraksi visual (*zero gradients*).
 
 ### 2.2 Target Pengguna (User Personas)
-| Persona | Role & Focus | Tantangan Utama | Solusi PulseHQ |
+| Persona | Role & Focus | Tantangan Utama | Solusi S.P.H.E.R.E |
 | :--- | :--- | :--- | :--- |
 | **NOC Operator** | Monitoring sinyal krisis 24/7 | Terlalu banyak alert palsu (*noise*) | Live Firehose + Alarm Crisis Signal Tier 1-3 |
 | **Cyber Forensic Analyst** | Audit keaslian akun & buzzer ring | Menghubungkan titik antar platform | Account Investigation & Starburst D3 Graph |
 | **Public Relations Director** | Respon krisis & Share of Voice | Mengetahui dampak krisis terhadap kompetitor | SOV Matrix & Dynamic Crisis Playbook |
 | **C-Level Executive** | Pengambilan keputusan eksekutif | Membutuhkan ringkasan laporan siap cetak | Report Builder Studio & PDF Paper Preview |
 
-### 2.3 Spesifikasi Modul Utama (9 Core Views)
+### 2.3 Spesifikasi Modul Utama (11 Core Views)
 
 ```
                        ┌──────────────────────────────────────────┐
-                       │          PULSEHQ DASHBOARD SYSTEM        │
+                       │          S.P.H.E.R.E DASHBOARD SYSTEM     │
                        └────────────────────┬─────────────────────┘
                                             │
    ┌───────────────────┬────────────────────┼────────────────────┬───────────────────┐
@@ -181,28 +181,40 @@ Modul forensik khusus untuk membedah akun mencurigakan secara tuntas:
 - **API Key Management Vault**: Manajemen API Token dengan masking bintang, status kuota rate-limit, dan aksi regenerasi key.
 - **Role-Based Access Control (RBAC)**: Pengaturan hak akses anggota tim (Admin, Analyst, Viewer).
 
+### Modul 10: Data Leak Radar & Dark Web Intelligence (FBI/MI6 Grade OSINT Suite)
+- **Continuous Tor Darknet Scanner**: Sniffer waktu-nyata memantau 142 node Tor darknet, Pastebin dumps, Telegram leak channels (@DarkLogs_Indo), dan BreachForums v2.
+- **OSINT Deep Breach Search Engine**: Pencarian real-time pada database kebocoran kredensial berdasarkan domain perusahaan (`company-x.com`), subnet IP (`103.147.36.0/24`), NIK/KTP, atau hash rahasia.
+- **Automated Secret Revocation Gateway**: Tombol aksi mitigasi otomatis yang mengirim perintah pembatalan API Key (AWS Access Keys, Stripe Secrets, JWT tokens) ke Identity Provider & Cloudflare Gatekeeper WAF.
+- **Exposed Data Classification Deck**: Donut Chart Chart.js memvisualisasikan persentase jenis data bocor (Corporate Passwords, API Secrets, Executive PII/Passport, Customer DBs).
+
+### Modul 11: Target CCTV Reconnaissance & Spatial Matrix
+- **Multi-Camera Stream Matrix (6-Channel Grid)**: Matriks 6 channel kamera CCTV interaktif dengan animasi scanline waktu-nyata, jam timestamp per-kamera, dan bounding box tracking objek bergerak.
+- **Real-Time License Plate OCR Scanner**: Feed log otomatis yang memindai plat nomor kendaraan di sekitar perimeter target dengan deteksi instan plat target (`B 1092 RFS` matched 99.4% confidence).
+- **Target Biometric Profile Deck**: Profil biometrik subjek target (#TS-0921), ID pengenalan wajah, status risiko, dan status lokasi kamera terakhir.
+- **PTZ (Pan-Tilt-Zoom) Digital Joystick & Thermal IR Vision**: Tombol kontrol arah servo kamera PTZ digital serta sakelar mode penglihatan malam infra-merah / thermal vision.
+
 ---
 
-## 🎨 Desain Sistem & Estetika (NOC Visual Spec)
+## 🎨 Desain Sistem & Estetika (Next.js Pitch Black NOC Visual Spec)
 
-PulseHQ mematuhi prinsip desain **Tier-1 Command Center (Apple HIG Precision + Industrial Dark NOC Aesthetic)**:
+S.P.H.E.R.E mematuhi prinsip desain **Next.js Pitch-Black Command Center (MI6/FBI Super OSINT Aesthetic)**:
 
 ### Palette Warna (Solid Hex System - Zero Gradients):
 | CSS Variable | Hex / Value | Penggunaan |
 | :--- | :--- | :--- |
-| `--bg-base` | `#0d0e12` | Latar belakang dasar aplikasi |
-| `--bg-elevated` | `#13151b` | Sidebar & Header surface |
-| `--bg-card` | `#191c24` | Container kartu bento & modul |
-| `--border-default` | `#252836` | Garis batas komponen |
-| `--blue-500` | `#3b82f6` | Warna aksen utama (Primary Accent) |
+| `--bg-base` | `#000000` | Latar belakang dasar pitch-black |
+| `--bg-elevated` | `#08080a` | Sidebar & Header surface |
+| `--bg-card` | `#0a0a0c` | Container kartu bento & modul |
+| `--border-default` | `#27272a` | Garis batas presisi tinggi |
+| `--blue-500` | `#38bdf8` | Warna aksen utama (Primary Accent) |
 | `--emerald-500` | `#10b981` | Sentimen Positif & Status Active |
-| `--rose-500` | `#f43f5e` | Sentimen Negatif, Bot Alert, Crisis |
-| `--amber-500` | `#f59e0b` | Peringatan & Status Warning |
-| `--purple-500` | `#8b5cf6` | Kategori media & fitur PRO |
+| `--rose-500` | `#ef4444` | Darknet Threat Alert, Bot Alert, Crisis |
+| `--amber-500` | `#f59e0b` | Peringatan API Key Leak |
+| `--purple-500` | `#a855f7` | Kategori media & OSINT data |
 
 ### Typography Scale:
 - **Primary Font**: `'Inter'`, -apple-system, BlinkMacSystemFont, sans-serif.
-- **Monospace Font**: `ui-monospace`, `'SFMono-Regular'`, `'Cascadia Code'`, monospace (digunakan pada console log, ID akun, & statistik angka).
+- **Monospace Font**: `ui-monospace`, `'SFMono-Regular'`, `'Cascadia Code'`, monospace (digunakan pada console log, ID akun, leak hash, & statistik angka).
 
 ---
 
@@ -211,23 +223,24 @@ PulseHQ mematuhi prinsip desain **Tier-1 Command Center (Apple HIG Precision + I
 ```
 +-------------------------------------------------------------------+
 |                            FRONTEND UI                            |
-|     HTML5 Semantic Views | Vanilla CSS Tier-1 Design System       |
+|     HTML5 Semantic Views | Next.js Pitch Black Design System      |
 +--------------------------------─┬─────────────────────────────────+
                                   │
 +--------------------------------─┴─────────────────────────────────+
 |                           ENGINE LAYER                            |
 |  js/dashboard.js        js/graph-engine.js      js/graph-data.js   |
 |  (Core State & Views)   (D3 Force Simulation)   (Entity Schemas)   |
-+─────────┬───────────────────────┬────────────────────────┬────────+
-          │                       │                        │
-+─────────┴────────+    +─────────┴────────+     +──────────┴────────+
-|    D3.js v7      |    |    Chart.js     |     |    Leaflet.js     |
-| (Force Graphing) |    | (Analytics Deck)|     |  (Geo Mapping)    |
-+──────────────────+    +─────────────────+     +───────────────────+
++─────────┬───────────────────┬───────────────────────┬─────────────+
+          │                   │                       │
++─────────┴────────+  +───────┴────────+    +─────────┴────────+  +──────────┴────────+
+| COBE 3D WebGL    |  |    D3.js v7    |    |    Chart.js     |  |    Leaflet.js     |
+| Global 3D Globe  |  | (Force Graph)  |    | (Analytics Deck)|  |  (Geo Mapping)    |
++──────────────────+  +────────────────+    +────────────────-+  +───────────────────+
 ```
 
 ### Library Dependencies:
-- **Chart.js** (`cdn.jsdelivr.net/npm/chart.js`): Rendering grafik tren, donut SOV, radar, & bar chart.
+- **COBE 3D WebGL Globe** (`esm.sh/cobe@0.6.3`): Render 3D WebGL Globe interaktif dengan arc koneksi proxy & marker koordinat presisi.
+- **Chart.js** (`cdn.jsdelivr.net/npm/chart.js`): Rendering grafik tren, donut SOV, radar, & classification donut chart.
 - **D3.js v7** (`cdn.jsdelivr.net/npm/d3@7`): Physics engine simulasi force-directed graph.
 - **Leaflet.js** (`unpkg.com/leaflet@1.9.4`): Peta geospasial interaktif Indonesia.
 - **Phosphor Icons** (`unpkg.com/@phosphor-icons/web`): Iconset enterprise presisi tinggi.
@@ -238,16 +251,18 @@ PulseHQ mematuhi prinsip desain **Tier-1 Command Center (Apple HIG Precision + I
 
 ```
 /
-├── index.html                # Main HTML5 Single Page Application (9 Views Included)
+├── index.html                # Main HTML5 Single Page Application (10 Views + COBE 3D WebGL Globe)
 ├── README.md                 # Dokumentasi Superlengkap & PRD Spesifikasi Sistem
+├── prd.txt                   # Product Requirement Document (PRD)
 ├── SKILLS/                   # Knowledge Items & Manual Specs
 ├── css/
-│   ├── styles.css            # Tier-1 Design System, Responsive Rules & Module Styles
+│   ├── styles.css            # Next.js Pitch Black Design System, Grid Overlays & Module Styles
 │   └── graph.css             # Obsidian Canvas Overlay, HUD Controls & Drawer CSS
 └── js/
-    ├── dashboard.js          # Main App Controller, State Engine & Modular Charts
+    ├── dashboard.js          # App Controller, State Engine, Charts, COBE 3D Globe & Data Leak Radar
     ├── graph-engine.js       # D3.js v7 Force Simulation Physics & Canvas Renderer
     └── graph-data.js         # Enterprise Entity Schemas, Nodes & Link Datasets
+```
 ```
 
 ---
@@ -258,8 +273,8 @@ Aplikasi ini menggunakan arsitektur **Pure Web Application (HTML5/CSS3/ES6 JS)**
 
 ### Langkah 1: Clone Repository
 ```bash
-git clone https://github.com/Nazca13/PulseHQ.git
-cd PulseHQ
+git clone https://github.com/Nazca13/SPHERE.git
+cd SPHERE
 ```
 
 ### Langkah 2: Jalankan Local Server
@@ -285,7 +300,7 @@ http://localhost:8080
 
 ## 📐 Matriks Respon & Skalabilitas (Responsiveness Spec)
 
-PulseHQ dirancang ultra-responsif dari layar monitor 4K NOC hingga perangkat mobile smartphone:
+S.P.H.E.R.E dirancang ultra-responsif dari layar monitor 4K NOC hingga perangkat mobile smartphone:
 
 | Breakpoint | Target Device | Penyesuaian Layout |
 | :--- | :--- | :--- |
@@ -298,6 +313,7 @@ PulseHQ dirancang ultra-responsif dari layar monitor 4K NOC hingga perangkat mob
 
 ## ⚖️ Lisensi & Hak Cipta
 
-**PulseHQ Enterprise Social Media Intelligence Platform**  
-Copyright © 2026 Indocorp Enterprise & Nazca13. All rights reserved.  
+**S.P.H.E.R.E — Social Profiling & Heuristic Evaluation Reporting Engine**  
+Copyright © 2026 Enterprise Cyber Intelligence Taskforce & Nazca13. All rights reserved.  
 Dokumentasi dan kode sumber ini dilindungi di bawah skema lisensi internal proprietary.
+# S.P.H.E.R.E
