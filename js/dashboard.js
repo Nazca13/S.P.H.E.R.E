@@ -861,7 +861,7 @@ let invNodesData = [];
 let invLinksData = [];
 let activeInspectedNode = null;
 
-function initInvestigationGraph() {
+function initInvestigationGraph(forceReset = false) {
     const canvas = document.getElementById('investigation-graph-canvas');
     if (!canvas) return;
 
@@ -869,6 +869,7 @@ function initInvestigationGraph() {
     let width = container.clientWidth || 800;
     let height = container.clientHeight || 420;
     let dpr = window.devicePixelRatio || 1;
+    const ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
         if (!container || !canvas) return;
@@ -877,10 +878,13 @@ function initInvestigationGraph() {
         dpr = window.devicePixelRatio || 1;
         canvas.width = width * dpr;
         canvas.height = height * dpr;
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform matrix to prevent scale stacking
         ctx.scale(dpr, dpr);
-        if (targetNode) {
-            targetNode.fx = width / 2;
-            targetNode.fy = height / 2;
+        
+        const target = invNodesData.find(n => n.id === 'target');
+        if (target) {
+            target.fx = width / 2;
+            target.fy = height / 2;
         }
         if (investigationGraphSim) {
             investigationGraphSim.force('center', d3.forceCenter(width / 2, height / 2));
@@ -888,9 +892,16 @@ function initInvestigationGraph() {
         }
     }
 
+    // If simulation already exists, just resize and wake up simulation!
+    if (investigationGraphSim && !forceReset) {
+        resizeCanvas();
+        investigationGraphSim.alpha(0.5).restart();
+        return;
+    }
+
     canvas.width = width * dpr;
     canvas.height = height * dpr;
-    const ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.scale(dpr, dpr);
 
     // 1. Central Target Node (@buzz_master_id)
@@ -957,8 +968,11 @@ function initInvestigationGraph() {
         .force('charge', d3.forceManyBody().strength(-240))
         .force('center', d3.forceCenter(width / 2, height / 2))
         .force('collide', d3.forceCollide().radius(d => d.radius + 12))
+        .alphaDecay(0.015)
+        .alphaTarget(0.005) // Keep slight pulse physics active
         .on('tick', renderInvestigationCanvas);
 
+    window.removeEventListener('resize', resizeCanvas);
     window.addEventListener('resize', resizeCanvas);
 
     // Mouse drag & hover interaction setup
@@ -1024,16 +1038,16 @@ function initInvestigationGraph() {
         }
     };
 
-    window.onmouseup = () => {
+    window.addEventListener('mouseup', () => {
         if (draggedNode) {
             if (draggedNode.id !== 'target') {
                 draggedNode.fx = null;
                 draggedNode.fy = null;
             }
             draggedNode = null;
-            investigationGraphSim.alphaTarget(0);
+            investigationGraphSim.alphaTarget(0.005);
         }
-    };
+    });
 
     let pulseRadius = 0;
     function renderInvestigationCanvas() {
