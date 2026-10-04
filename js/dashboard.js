@@ -941,20 +941,77 @@ function initInvestigationGraph() {
         .force('collide', d3.forceCollide().radius(d => d.radius + 18))
         .on('tick', renderInvestigationCanvas);
 
-    canvas.onclick = (evt) => {
+    // Mouse drag & hover interaction setup
+    let draggedNode = null;
+    let hoveredNode = null;
+    const tooltip = document.getElementById('inv-tooltip');
+
+    canvas.onmousemove = (evt) => {
         const rect = canvas.getBoundingClientRect();
         const mouseX = evt.clientX - rect.left;
         const mouseY = evt.clientY - rect.top;
 
-        const clicked = invNodesData.find(n => {
+        if (draggedNode) {
+            draggedNode.fx = mouseX;
+            draggedNode.fy = mouseY;
+            investigationGraphSim.alphaTarget(0.3).restart();
+            return;
+        }
+
+        const found = invNodesData.find(n => {
             const dx = n.x - mouseX;
             const dy = n.y - mouseY;
-            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 8;
+            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 6;
         });
 
-        if (clicked) {
-            activeInspectedNode = clicked;
-            updateNodeInspector(clicked);
+        if (found) {
+            hoveredNode = found;
+            canvas.style.cursor = 'pointer';
+            if (tooltip) {
+                tooltip.style.display = 'block';
+                tooltip.style.left = (mouseX + 16) + 'px';
+                tooltip.style.top = (mouseY - 10) + 'px';
+                document.getElementById('tt-title').textContent = found.name;
+                document.getElementById('tt-type').textContent = found.type || 'Forensic Branch';
+                document.getElementById('tt-desc').textContent = found.detail || 'Forensic analysis vector';
+            }
+        } else {
+            hoveredNode = null;
+            canvas.style.cursor = 'grab';
+            if (tooltip) tooltip.style.display = 'none';
+        }
+    };
+
+    canvas.onmousedown = (evt) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = evt.clientX - rect.left;
+        const mouseY = evt.clientY - rect.top;
+
+        const found = invNodesData.find(n => {
+            const dx = n.x - mouseX;
+            const dy = n.y - mouseY;
+            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 6;
+        });
+
+        if (found) {
+            draggedNode = found;
+            if (found.id !== 'target') {
+                found.fx = mouseX;
+                found.fy = mouseY;
+            }
+            activeInspectedNode = found;
+            updateNodeInspector(found);
+        }
+    };
+
+    window.onmouseup = () => {
+        if (draggedNode) {
+            if (draggedNode.id !== 'target') {
+                draggedNode.fx = null;
+                draggedNode.fy = null;
+            }
+            draggedNode = null;
+            investigationGraphSim.alphaTarget(0);
         }
     };
 
@@ -975,13 +1032,14 @@ function initInvestigationGraph() {
             ctx.beginPath();
             ctx.moveTo(l.source.x, l.source.y);
             ctx.lineTo(l.target.x, l.target.y);
+            const isConnectedToHovered = hoveredNode && (l.source.id === hoveredNode.id || l.target.id === hoveredNode.id);
             if (l.source.id === 'target') {
-                ctx.strokeStyle = 'rgba(244, 63, 94, 0.6)';
-                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = isConnectedToHovered ? 'rgba(244, 63, 94, 0.95)' : 'rgba(244, 63, 94, 0.55)';
+                ctx.lineWidth = isConnectedToHovered ? 3.5 : 2.5;
                 ctx.setLineDash([6, 4]);
             } else {
-                ctx.strokeStyle = 'rgba(144, 153, 176, 0.3)';
-                ctx.lineWidth = 1.4;
+                ctx.strokeStyle = isConnectedToHovered ? 'rgba(59, 130, 246, 0.8)' : 'rgba(144, 153, 176, 0.25)';
+                ctx.lineWidth = isConnectedToHovered ? 2.5 : 1.2;
                 ctx.setLineDash([]);
             }
             ctx.stroke();
@@ -1001,13 +1059,16 @@ function initInvestigationGraph() {
 
         // 3. Nodes & Labels
         invNodesData.forEach(n => {
+            const isHovered = hoveredNode && hoveredNode.id === n.id;
+            const isSelected = activeInspectedNode && activeInspectedNode.id === n.id;
+
             // Draw Node Circle
             ctx.beginPath();
-            ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+            ctx.arc(n.x, n.y, isHovered ? n.radius + 3 : n.radius, 0, 2 * Math.PI);
             ctx.fillStyle = n.color;
             ctx.fill();
-            ctx.strokeStyle = activeInspectedNode && activeInspectedNode.id === n.id ? '#ffffff' : '#08090d';
-            ctx.lineWidth = activeInspectedNode && activeInspectedNode.id === n.id ? 4 : 2.5;
+            ctx.strokeStyle = isSelected || isHovered ? '#ffffff' : '#08090d';
+            ctx.lineWidth = isSelected || isHovered ? 4 : 2.5;
             ctx.stroke();
 
             // Label Text Pill Background
@@ -1016,13 +1077,13 @@ function initInvestigationGraph() {
             ctx.font = font;
             const textWidth = ctx.measureText(text).width;
             const textHeight = n.id === 'target' ? 16 : 14;
-            const textY = n.y + n.radius + 14;
+            const textY = n.y + n.radius + (isHovered ? 17 : 14);
 
             ctx.fillStyle = n.id === 'target' ? 'rgba(244, 63, 94, 0.95)' : 'rgba(19, 21, 27, 0.90)';
             ctx.beginPath();
             ctx.roundRect(n.x - textWidth / 2 - 6, textY - 10, textWidth + 12, textHeight, 4);
             ctx.fill();
-            ctx.strokeStyle = n.id === 'target' ? '#ffffff' : 'rgba(255,255,255,0.15)';
+            ctx.strokeStyle = n.id === 'target' || isHovered ? '#ffffff' : 'rgba(255,255,255,0.15)';
             ctx.lineWidth = 1;
             ctx.stroke();
 
@@ -1036,7 +1097,19 @@ function initInvestigationGraph() {
 }
 
 function updateNodeInspector(node) {
-    alert(`[FORENSIC NODE BEDAH TUNTAS]\nEntitas Node: ${node.name}\nKlasifikasi Detail: ${node.detail || 'Forensic breakdown vector'}`);
+    const drawer = document.getElementById('inv-inspector-drawer');
+    if (!drawer) return;
+
+    drawer.classList.add('active');
+    document.getElementById('insp-name').textContent = node.name;
+    document.getElementById('insp-sub').textContent = `Classification: ${node.type || 'Forensic Branch'}`;
+    document.getElementById('insp-detail').textContent = node.detail || 'Deep forensic vector dissecting account activity.';
+    document.getElementById('insp-badge').textContent = node.id === 'target' ? 'TARGET NODE' : 'FORENSIC VECTOR';
+}
+
+function closeInvInspector() {
+    const drawer = document.getElementById('inv-inspector-drawer');
+    if (drawer) drawer.classList.remove('active');
 }
 
 function initBotGaugeChart() {
