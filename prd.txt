@@ -60,6 +60,7 @@ Primary Key Performance Indicator (KPI) Targets:
 - Feature 1.2: Real-time KPI Cards (Total Mentions, Net Sentiment Score, Bot Attack Rate, Reach Potential).
 - Feature 1.3: Predictive Trend Line Chart showing actual vs AI-projected volume.
 - Feature 1.4: Aspect-based Sentiment Breakdown (Product, Support, Pricing, Reputation).
+- Feature 1.5: Featured 3D OSINT Operations Center Globe (COBE WebGL) placed at the top of Command Center with enlarged 480px WebGL canvas, 3-column live telemetry HUD, spring drag momentum, and global orbital station quick selectors.
 
 [MODULE 2: ACCOUNT INVESTIGATION & BOT AUDIT]
 - Feature 2.1: Target Account Inspection Header (@buzz_master_id) with IP proxy and registration timestamps.
@@ -73,8 +74,9 @@ Primary Key Performance Indicator (KPI) Targets:
   4. Historical Alias Vault
   5. Behavioral Automation
   6. Deleted Content Archive
-- Feature 2.5: 24/7 Hourly Activity Heatmap Grid (7 Days x 24 Hours) for bot schedule audit.
-- Feature 2.6: Entity Correlation & Co-Mention Matrix Table with Pearson correlation index.
+- Feature 2.5: 3D Orbital Proxy Arc Globe (COBE WebGL) showing global bot relay connection arcs, pointer spring rotation, and telemetry coordinate overlay.
+- Feature 2.6: 24/7 Hourly Activity Heatmap Grid (7 Days x 24 Hours) for bot schedule audit.
+- Feature 2.7: Entity Correlation & Co-Mention Matrix Table with Pearson correlation index.
 
 [MODULE 3: ENTITY NETWORK GRAPH STUDIO]
 - Feature 3.1: D3.js v7 Physics Engine with Canvas 2D rendering at 60 FPS.

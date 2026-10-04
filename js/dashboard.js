@@ -23,7 +23,9 @@ function switchView(viewId) {
     document.querySelectorAll(`[data-view="${viewId}"]`).forEach(el => el.classList.add('active'));
 
     // Lazy init specialized engines
-    if (viewId === 'view-network-graph' && typeof initNetworkGraph === 'function') {
+    if (viewId === 'view-command-center') {
+        setTimeout(() => initDashboardGlobe(), 60);
+    } else if (viewId === 'view-network-graph' && typeof initNetworkGraph === 'function') {
         setTimeout(() => initNetworkGraph(), 60);
     } else if (viewId === 'view-geo-intelligence') {
         setTimeout(() => initGeoMap(), 60);
@@ -32,7 +34,10 @@ function switchView(viewId) {
     } else if (viewId === 'view-report-builder') {
         setTimeout(() => initReportPreviewChart(), 60);
     } else if (viewId === 'view-account-investigation') {
-        setTimeout(() => initAccountInvestigation(), 60);
+        setTimeout(() => {
+            initAccountInvestigation();
+            initAccountInvestigationGlobe();
+        }, 60);
     }
 }
 
@@ -487,6 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initPlatformChart();
     initFirehose();
     initKOLList();
+    setTimeout(() => {
+        initDashboardGlobe();
+        initAccountInvestigationGlobe();
+    }, 100);
 });
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -1307,6 +1316,256 @@ function runAccountAudit() {
 
     alert(`Deep Account Audit completed for ${handle}! 87% Bot Probability confirmed.`);
 }
+
+/* ==========================================================================
+   COBE 3D WEBGL GLOBE ENGINES (Command Center & Account Investigation)
+   ========================================================================== */
+
+let dashboardGlobeInstance = null;
+let dashGlobePhi = 0;
+let dashGlobeTheta = 0.2;
+let dashPointerInteracting = null;
+let dashPointerMovement = { x: 0, y: 0 };
+let dashIsAutoSpinning = true;
+
+const DASH_GLOBE_MARKERS = [
+    { location: [-6.2088, 106.8456], size: 0.08, id: 'jkt', name: 'DKI Jakarta', stats: 'Active Accounts: 342,100 · Volume: 840K/day' },
+    { location: [35.6762, 139.6503], size: 0.06, id: 'tky', name: 'Tokyo', stats: 'Active Accounts: 198,400 · Volume: 520K/day' },
+    { location: [51.5074, -0.1278], size: 0.06, id: 'lon', name: 'London', stats: 'Active Accounts: 145,200 · Volume: 410K/day' },
+    { location: [40.7128, -74.0060], size: 0.07, id: 'nyc', name: 'New York', stats: 'Active Accounts: 210,000 · Volume: 680K/day' },
+    { location: [37.7749, -122.4194], size: 0.06, id: 'sf', name: 'San Francisco', stats: 'Active Accounts: 165,800 · Volume: 490K/day' },
+    { location: [-33.8688, 151.2093], size: 0.05, id: 'syd', name: 'Sydney', stats: 'Active Accounts: 88,300 · Volume: 230K/day' },
+];
+
+function initDashboardGlobe() {
+    const canvas = document.getElementById('dashboard-globe-canvas');
+    if (!canvas || typeof createGlobe === 'undefined') return;
+
+    if (dashboardGlobeInstance) {
+        dashboardGlobeInstance.destroy();
+        dashboardGlobeInstance = null;
+    }
+
+    const rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : { width: 800, height: 480 };
+    const width = Math.max(500, (rect.width || 800)) * 2;
+    const height = Math.max(400, (rect.height || 480)) * 2;
+
+    try {
+        dashboardGlobeInstance = createGlobe(canvas, {
+            devicePixelRatio: 2,
+            width: width,
+            height: height,
+            phi: dashGlobePhi,
+            theta: dashGlobeTheta,
+            dark: 1,
+            diffuse: 1.3,
+            mapSamples: 24000,
+            mapBrightness: 7,
+            baseColor: [0.03, 0.03, 0.05],
+            markerColor: [1, 1, 1],
+            glowColor: [0.25, 0.3, 0.45],
+            markers: DASH_GLOBE_MARKERS.map(m => ({ location: m.location, size: 0.07, id: m.id })),
+            arcs: [
+                { from: [-6.2088, 106.8456], to: [35.6762, 139.6503] },
+                { from: [-6.2088, 106.8456], to: [51.5074, -0.1278] },
+                { from: [-6.2088, 106.8456], to: [40.7128, -74.0060] },
+                { from: [-6.2088, 106.8456], to: [-33.8688, 151.2093] },
+                { from: [-6.2088, 106.8456], to: [37.7749, -122.4194] },
+            ],
+            arcColor: [0.22, 0.74, 0.97],
+            arcWidth: 0.7,
+            arcHeight: 0.38,
+            onRender: (state) => {
+                if (dashIsAutoSpinning && dashPointerInteracting === null) {
+                    dashGlobePhi += 0.0035;
+                }
+                state.phi = dashGlobePhi + dashPointerMovement.x;
+                state.theta = dashGlobeTheta + dashPointerMovement.y;
+            }
+        });
+    } catch(err) {
+        console.warn('COBE Dashboard Globe init error:', err);
+    }
+
+    // Pointer drag physics
+    canvas.onpointerdown = (e) => {
+        dashPointerInteracting = { x: e.clientX, y: e.clientY };
+        canvas.style.cursor = 'grabbing';
+    };
+
+    window.addEventListener('pointermove', (e) => {
+        if (dashPointerInteracting !== null) {
+            const deltaX = (e.clientX - dashPointerInteracting.x) / 180;
+            const deltaY = (e.clientY - dashPointerInteracting.y) / 180;
+            dashPointerMovement.x = deltaX;
+            dashPointerMovement.y = Math.max(-0.5, Math.min(0.5, deltaY));
+        }
+    });
+
+    window.addEventListener('pointerup', () => {
+        if (dashPointerInteracting !== null) {
+            dashGlobePhi += dashPointerMovement.x;
+            dashGlobeTheta += dashPointerMovement.y;
+            dashPointerMovement = { x: 0, y: 0 };
+            dashPointerInteracting = null;
+            if (canvas) canvas.style.cursor = 'grab';
+        }
+    });
+}
+
+function focusGlobeCity(cityId) {
+    dashIsAutoSpinning = false;
+    const targetMap = {
+        'jkt': { phi: -1.85, theta: 0.1, accounts: '342,100 Accounts', volume: '840,000 posts/day', name: 'DKI Jakarta, Indonesia' },
+        'tky': { phi: -2.4, theta: 0.3, accounts: '198,400 Accounts', volume: '520,000 posts/day', name: 'Tokyo, Japan' },
+        'lon': { phi: 0.0, theta: 0.5, accounts: '145,200 Accounts', volume: '410,000 posts/day', name: 'London, UK' },
+        'nyc': { phi: 1.2, theta: 0.4, accounts: '210,000 Accounts', volume: '680,000 posts/day', name: 'New York, USA' },
+        'sf':  { phi: 2.1, theta: 0.4, accounts: '165,800 Accounts', volume: '490,000 posts/day', name: 'San Francisco, USA' },
+    };
+    if (targetMap[cityId]) {
+        dashGlobePhi = targetMap[cityId].phi;
+        dashGlobeTheta = targetMap[cityId].theta;
+        
+        const titleEl = document.getElementById('dash-globe-city-title');
+        const accEl = document.getElementById('dash-hero-accounts');
+        const volEl = document.getElementById('dash-hero-volume');
+        
+        if (titleEl) titleEl.textContent = targetMap[cityId].name;
+        if (accEl) accEl.textContent = targetMap[cityId].accounts;
+        if (volEl) volEl.textContent = targetMap[cityId].volume;
+    }
+}
+
+function toggleDashboardGlobeSpin() {
+    dashIsAutoSpinning = !dashIsAutoSpinning;
+}
+
+
+// ── Account Investigation 3D Proxy Arc Globe ───────────────────────────
+
+let invGlobeInstance = null;
+let invGlobePhi = -1.85; // Default center on Jakarta
+let invGlobeTheta = 0.15;
+let invPointerInteracting = null;
+let invPointerMovement = { x: 0, y: 0 };
+let invIsAutoSpinning = true;
+
+const INV_GLOBE_NODES = [
+    { id: 'jkt', name: 'DKI Jakarta (Central Target Node)', location: [-6.2088, 106.8456], ip: '103.147.36.192', primary: true, size: 0.09 },
+    { id: 'sub', name: 'Surabaya Sub-Bot Node', location: [-7.2575, 112.7521], ip: '180.252.11.84', size: 0.05 },
+    { id: 'med', name: 'Medan Bot Relay', location: [3.5952, 98.6722], ip: '114.124.201.12', size: 0.05 },
+    { id: 'bdg', name: 'Bandung Click Farm Pool', location: [-6.9175, 107.6191], ip: '182.253.40.99', size: 0.05 },
+    { id: 'sf', name: 'San Francisco US Proxy Relay', location: [37.7749, -122.4194], ip: '104.28.14.88', size: 0.06 },
+    { id: 'tky', name: 'Tokyo Fast-Flux Server', location: [35.6762, 139.6503], ip: '133.242.18.90', size: 0.06 },
+];
+
+function initAccountInvestigationGlobe() {
+    const canvas = document.getElementById('inv-globe-canvas');
+    if (!canvas || typeof createGlobe === 'undefined') return;
+
+    if (invGlobeInstance) {
+        invGlobeInstance.destroy();
+        invGlobeInstance = null;
+    }
+
+    const rect = canvas.parentElement ? canvas.parentElement.getBoundingClientRect() : { width: 550, height: 340 };
+    const width = Math.max(300, (rect.width || 550)) * 2;
+    const height = Math.max(250, (rect.height || 340)) * 2;
+
+    try {
+        invGlobeInstance = createGlobe(canvas, {
+            devicePixelRatio: 2,
+            width: width,
+            height: height,
+            phi: invGlobePhi,
+            theta: invGlobeTheta,
+            dark: 1,
+            diffuse: 1.25,
+            mapSamples: 18000,
+            mapBrightness: 6.5,
+            baseColor: [0.03, 0.03, 0.05],
+            markerColor: [1, 0.25, 0.35],
+            glowColor: [0.2, 0.25, 0.35],
+            markers: INV_GLOBE_NODES.map(n => ({ location: n.location, size: n.size, id: n.id })),
+            arcs: [
+                { from: [-6.2088, 106.8456], to: [-7.2575, 112.7521] },
+                { from: [-6.2088, 106.8456], to: [3.5952, 98.6722] },
+                { from: [-6.2088, 106.8456], to: [-6.9175, 107.6191] },
+                { from: [-6.2088, 106.8456], to: [37.7749, -122.4194] },
+                { from: [-6.2088, 106.8456], to: [35.6762, 139.6503] },
+            ],
+            arcColor: [0.22, 0.74, 0.97],
+            arcWidth: 0.6,
+            arcHeight: 0.38,
+            onRender: (state) => {
+                if (invIsAutoSpinning && invPointerInteracting === null) {
+                    invGlobePhi += 0.003;
+                }
+                state.phi = invGlobePhi + invPointerMovement.x;
+                state.theta = invGlobeTheta + invPointerMovement.y;
+            }
+        });
+    } catch(err) {
+        console.warn('COBE Acc Inves Globe init error:', err);
+    }
+
+    canvas.onpointerdown = (e) => {
+        invPointerInteracting = { x: e.clientX, y: e.clientY };
+        canvas.style.cursor = 'grabbing';
+    };
+
+    window.addEventListener('pointermove', (e) => {
+        if (invPointerInteracting !== null) {
+            const deltaX = (e.clientX - invPointerInteracting.x) / 180;
+            const deltaY = (e.clientY - invPointerInteracting.y) / 180;
+            invPointerMovement.x = deltaX;
+            invPointerMovement.y = Math.max(-0.5, Math.min(0.5, deltaY));
+        }
+    });
+
+    window.addEventListener('pointerup', () => {
+        if (invPointerInteracting !== null) {
+            invGlobePhi += invPointerMovement.x;
+            invGlobeTheta += invPointerMovement.y;
+            invPointerMovement = { x: 0, y: 0 };
+            invPointerInteracting = null;
+            if (canvas) canvas.style.cursor = 'grab';
+        }
+    });
+}
+
+function focusInvGlobeTarget(targetId) {
+    invIsAutoSpinning = false;
+    if (targetId === 'jkt') {
+        invGlobePhi = -1.85;
+        invGlobeTheta = 0.1;
+        updateInvTelemetryHUD(-6.2088, 106.8456, '103.147.36.192');
+    } else if (targetId === 'sf') {
+        invGlobePhi = 2.1;
+        invGlobeTheta = 0.4;
+        updateInvTelemetryHUD(37.7749, -122.4194, '104.28.14.88');
+    }
+}
+
+function updateInvTelemetryHUD(lat, lng, ip) {
+    const latEl = document.getElementById('inv-geo-lat');
+    const lngEl = document.getElementById('inv-geo-lng');
+    const ipEl = document.getElementById('inv-geo-ip');
+    if (latEl) latEl.textContent = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}`;
+    if (lngEl) lngEl.textContent = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : 'W'}`;
+    if (ipEl) ipEl.textContent = ip;
+}
+
+function toggleInvGlobeSpin() {
+    invIsAutoSpinning = !invIsAutoSpinning;
+}
+
+// Global listener for COBE readiness event
+window.addEventListener('cobe-ready', () => {
+    initDashboardGlobe();
+    initAccountInvestigationGlobe();
+});
+
 
 
 

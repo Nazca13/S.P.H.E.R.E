@@ -7,50 +7,50 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&display=swap');
 
 :root {
-    /* ── Base Surfaces ── */
-    --bg-base:         #0d0e12;
-    --bg-elevated:     #13151b;
-    --bg-card:         #191c24;
-    --bg-card-hover:   #1e2230;
-    --bg-input:        #1a1d26;
+    /* ── Next.js Pitch Black Base Surfaces ── */
+    --bg-base:         #000000;
+    --bg-elevated:     #08080a;
+    --bg-card:         #0a0a0c;
+    --bg-card-hover:   #121215;
+    --bg-input:        #0f0f12;
 
-    /* ── Borders ── */
-    --border-subtle:   #1e2230;
-    --border-default:  #252836;
-    --border-strong:   #3a3f52;
+    /* ── Next.js Crisp Borders ── */
+    --border-subtle:   #1b1b1f;
+    --border-default:  #27272e;
+    --border-strong:   #3f3f46;
 
     /* ── Typography ── */
-    --text-primary:    #f0f2f7;
-    --text-secondary:  #9099b0;
-    --text-muted:      #545b72;
-    --text-invert:     #0d0e12;
+    --text-primary:    #ffffff;
+    --text-secondary:  #a1a1aa;
+    --text-muted:      #71717a;
+    --text-invert:     #000000;
 
-    /* ── Brand Accents — Solid Curated Palette ── */
-    --blue-500:        #3b82f6;
-    --blue-600:        #2563eb;
-    --blue-100:        rgba(59, 130, 246, 0.10);
-    --blue-200:        rgba(59, 130, 246, 0.18);
+    /* ── Brand Accents — Next.js High Contrast Palette ── */
+    --blue-500:        #38bdf8;
+    --blue-600:        #0284c7;
+    --blue-100:        rgba(56, 189, 248, 0.12);
+    --blue-200:        rgba(56, 189, 248, 0.20);
 
     --orange-500:      #f97316;
-    --orange-100:      rgba(249, 115, 22, 0.10);
+    --orange-100:      rgba(249, 115, 22, 0.12);
 
-    --purple-500:      #8b5cf6;
-    --purple-100:      rgba(139, 92, 246, 0.10);
+    --purple-500:      #a855f7;
+    --purple-100:      rgba(168, 85, 247, 0.12);
 
     --emerald-500:     #10b981;
-    --emerald-100:     rgba(16, 185, 129, 0.10);
+    --emerald-100:     rgba(16, 185, 129, 0.12);
 
     --rose-500:        #f43f5e;
-    --rose-100:        rgba(244, 63, 94, 0.10);
+    --rose-100:        rgba(244, 63, 94, 0.12);
 
     --amber-500:       #f59e0b;
-    --amber-100:       rgba(245, 158, 11, 0.10);
+    --amber-100:       rgba(245, 158, 11, 0.12);
 
     --cyan-500:        #06b6d4;
-    --cyan-100:        rgba(6, 182, 212, 0.10);
+    --cyan-100:        rgba(6, 182, 212, 0.12);
 
     --pink-500:        #ec4899;
-    --pink-100:        rgba(236, 72, 153, 0.10);
+    --pink-100:        rgba(236, 72, 153, 0.12);
 
     /* ── Status Semantic ── */
     --status-positive: var(--emerald-500);
@@ -75,11 +75,11 @@
     --r-2xl: 24px;
 
     /* ── Elevation ── */
-    --shadow-sm:   0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-    --shadow-md:   0 4px 12px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
-    --shadow-lg:   0 12px 32px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.4);
-    --shadow-glow-blue:   0 0 20px rgba(59, 130, 246, 0.2);
-    --shadow-glow-rose:   0 0 16px rgba(244, 63, 94, 0.25);
+    --shadow-sm:   0 1px 3px rgba(0,0,0,0.8), 0 1px 2px rgba(0,0,0,0.6);
+    --shadow-md:   0 4px 16px rgba(0,0,0,0.85);
+    --shadow-lg:   0 16px 40px rgba(0,0,0,0.95);
+    --shadow-glow-blue:   0 0 20px rgba(56, 189, 248, 0.18);
+    --shadow-glow-rose:   0 0 16px rgba(244, 63, 94, 0.22);
 
     /* ── Transitions ── */
     --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -93,7 +93,12 @@ html { font-size: 14px; }
 
 body {
     font-family: var(--font);
-    background: var(--bg-base);
+    background-color: #000000;
+    background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 119, 198, 0.12), transparent),
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
     color: var(--text-primary);
     display: flex;
     height: 100vh;

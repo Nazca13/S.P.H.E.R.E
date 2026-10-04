@@ -101,6 +101,7 @@ Dalam lanskap digital kontemporer, serangan opini publik terkoordinasi (kampanye
   - *Net Sentiment Score*: +34.2 (Skor indeks gabungan NLP).
   - *Bot Attack Rate*: 14.8% (Indikator ancaman merah jika > 10%).
   - *Reach Potential*: 42.8M tayangan percakapan.
+- **Featured 3D OSINT Operations Center Globe (COBE WebGL)**: Ditempatkan di bagian paling atas Command Center sebagai *Centerpiece Utama* dengan canvas 3D WebGL diperbesar (tinggi 480px, max-width 800px), tata letak 3 kolom interaktif (HUD Telemetri Geolocation kiri | Bola Dunia 3D Tengah | Stasiun Orbit Global kanan), kontrol rotasi spring-drag, serta quick-jump stasiun target.
 - **Predictive Trend Chart**: Grafik garis ganda Chart.js yang memproyeksikan volume percakapan aktual vs prediksi algoritma AI untuk 12 jam ke depan.
 - **Aspect-Based Sentiment Breakdown**: Progress bar sentimen pada variabel *Product Quality*, *Customer Support*, *Pricing*, dan *Brand Reputation*.
 
@@ -113,7 +114,10 @@ Modul forensik khusus untuk membedah akun mencurigakan secara tuntas:
    - Label Status Otomatis: `Genuine` (<30%), `Suspicious` (30–70%), `Bot / Amplification Node` (>70%).
 3. **Cross-Platform Digital Footprint**:
    - Badging status keaktifan akun lintas media sosial: *TikTok (Active)*, *Instagram (Active)*, *Telegram Channel (Flagged)*, *Reddit (Inactive)*, *LinkedIn (Found)*.
-4. **Starburst Radial D3 Forensics Graph**:
+4. **3D Orbital Proxy Arc Globe (COBE WebGL)**:
+   - Visualisasi globe 3D forensik dengan garis busur lengkung (*3D Connection Arcs*) yang menghubungkan Node Target utama (DKI Jakarta) dengan server proxy / relay botnet global (Surabaya, Medan, Bandung, San Francisco, Tokyo).
+   - Dilengkapi HUD Telemetry Geolocation (LAT, LNG, IP Proxy Pool) serta kontrol rotasi orbital.
+5. **Starburst Radial D3 Forensics Graph**:
    - Menggunakan D3.js Force Simulation khusus.
    - Akun target di pusat (`fx`, `fy`), dikelilingi **6 Hub Forensik Utama**:
      - `1. Buzzer Syndicate Ring` (28 akun bot terkoordinasi).
@@ -123,9 +127,9 @@ Modul forensik khusus untuk membedah akun mencurigakan secara tuntas:
      - `5. Behavioral Automation` (Pola posting 24/7 tanpa jeda tidur).
      - `6. Deleted Content Archive` (Arsip cuitan yang dihapus).
    - Fitur Interaktif: Drag node, hover highlight, tooltip glassmorphic, serta *Inspector Drawer Panel* saat node diklik.
-5. **24/7 Activity Heatmap Grid**:
+6. **24/7 Activity Heatmap Grid**:
    - Grid 7 hari x 24 jam yang menunjukkan jam-jam aktif posting akun untuk mendeteksi perilaku otomatisasi botnet.
-6. **Entity Correlation & Co-Mention Table**:
+7. **Entity Correlation & Co-Mention Table**:
    - Matriks korelasi Pearson antara akun target dengan node sekunder lengkap dengan Sync Burst lag dan Security Flag.
 
 ### Modul 3: Entity Network Graph Studio
