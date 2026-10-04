@@ -1343,7 +1343,12 @@ const DASH_GLOBE_MARKERS = [
 
 function initDashboardGlobe() {
     const canvas = document.getElementById('dashboard-globe-canvas');
-    if (!canvas || typeof createGlobe === 'undefined') return;
+    if (!canvas) return;
+
+    if (typeof createGlobe === 'undefined') {
+        setTimeout(initDashboardGlobe, 200);
+        return;
+    }
 
     if (dashboardGlobeInstance) {
         dashboardGlobeInstance.destroy();
@@ -1465,7 +1470,12 @@ const INV_GLOBE_NODES = [
 
 function initAccountInvestigationGlobe() {
     const canvas = document.getElementById('inv-globe-canvas');
-    if (!canvas || typeof createGlobe === 'undefined') return;
+    if (!canvas) return;
+
+    if (typeof createGlobe === 'undefined') {
+        setTimeout(initAccountInvestigationGlobe, 200);
+        return;
+    }
 
     if (invGlobeInstance) {
         invGlobeInstance.destroy();

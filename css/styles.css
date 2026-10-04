@@ -1622,6 +1622,8 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
 /* Investigation Graph Canvas & Correlation Table ── */
 .investigation-graph-container {
     height: clamp(340px, 45vh, 480px);

@@ -19,6 +19,10 @@
         import createGlobe from 'https://cdn.jsdelivr.net/npm/cobe@0.6.3/+esm';
         window.createGlobe = createGlobe;
         window.dispatchEvent(new CustomEvent('cobe-ready'));
+        if (typeof initDashboardGlobe === 'function') {
+            initDashboardGlobe();
+            initAccountInvestigationGlobe();
+        }
     </script>
 
     <!-- Enterprise Modular Stylesheets ($500K Spec) -->
