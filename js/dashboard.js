@@ -867,7 +867,7 @@ function initInvestigationGraph() {
 
     const container = canvas.parentElement;
     const width = container.clientWidth || 900;
-    const height = container.clientHeight || 460;
+    const height = container.clientHeight || 600;
     const dpr = window.devicePixelRatio || 1;
 
     canvas.width = width * dpr;
@@ -881,7 +881,7 @@ function initInvestigationGraph() {
         name: '@buzz_master_id',
         type: 'TARGET_ACCOUNT',
         color: '#f43f5e',
-        radius: 32,
+        radius: 36,
         x: width / 2,
         y: height / 2,
         fx: width / 2, // Fixed center
@@ -891,37 +891,37 @@ function initInvestigationGraph() {
 
     // 2. 6 Radial Forensic Hubs (Cabang Bedah Tuntas)
     const hubs = [
-        { id: 'hub_syndicate', name: '1. Buzzer Syndicate Ring', color: '#ef4444', radius: 22, detail: '28 coordinated bot accounts. Retweet sync lag: 0.4 seconds.' },
-        { id: 'hub_identity', name: '2. Cross-Platform Footprint', color: '#3b82f6', radius: 22, detail: '5 matching digital profiles across TikTok, IG, Telegram, Reddit.' },
-        { id: 'hub_vectors', name: '3. Campaign Attack Target', color: '#f59e0b', radius: 22, detail: 'Target brand: BrandX. Hashtag spam: #BrandGagal (120 post/hr).' },
-        { id: 'hub_alias', name: '4. Historical Alias Vault', color: '#8b5cf6', radius: 22, detail: 'Repurposed from quote farm account @galau_quotes_indo.' },
-        { id: 'hub_behavior', name: '5. Behavioral Automation', color: '#ec4899', radius: 22, detail: '24/7 continuous posting without human sleep gap (02-05 WIB).' },
-        { id: 'hub_deleted', name: '6. Deleted Content Archive', color: '#10b981', radius: 22, detail: '2 deleted posts cached by system before removal. Phishing link flagged.' },
+        { id: 'hub_syndicate', name: '1. Buzzer Syndicate Ring', color: '#ef4444', radius: 24, detail: '28 coordinated bot accounts. Retweet sync lag: 0.4 seconds.' },
+        { id: 'hub_identity', name: '2. Cross-Platform Footprint', color: '#3b82f6', radius: 24, detail: '5 matching digital profiles across TikTok, IG, Telegram, Reddit.' },
+        { id: 'hub_vectors', name: '3. Campaign Attack Target', color: '#f59e0b', radius: 24, detail: 'Target brand: BrandX. Hashtag spam: #BrandGagal (120 post/hr).' },
+        { id: 'hub_alias', name: '4. Historical Alias Vault', color: '#8b5cf6', radius: 24, detail: 'Repurposed from quote farm account @galau_quotes_indo.' },
+        { id: 'hub_behavior', name: '5. Behavioral Automation', color: '#ec4899', radius: 24, detail: '24/7 continuous posting without human sleep gap (02-05 WIB).' },
+        { id: 'hub_deleted', name: '6. Deleted Content Archive', color: '#10b981', radius: 24, detail: '2 deleted posts cached by system before removal. Phishing link flagged.' },
     ];
 
     // 3. Sub-nodes branching out from hubs
     const leafNodes = [
         // Hub 1 (Syndicate)
-        { id: 'leaf_bot1', hub: 'hub_syndicate', name: '@ring_node_alpha', color: '#f87171', radius: 14, detail: 'Sub-bot node executing instant retweets.' },
-        { id: 'leaf_bot2', hub: 'hub_syndicate', name: '@polit_bot_09', color: '#f87171', radius: 14, detail: 'Content mirroring bot registered Jan 2026.' },
+        { id: 'leaf_bot1', hub: 'hub_syndicate', name: '@ring_node_alpha', color: '#f87171', radius: 15, detail: 'Sub-bot node executing instant retweets.' },
+        { id: 'leaf_bot2', hub: 'hub_syndicate', name: '@polit_bot_09', color: '#f87171', radius: 15, detail: 'Content mirroring bot registered Jan 2026.' },
         
         // Hub 2 (Footprint)
-        { id: 'leaf_id1', hub: 'hub_identity', name: 'TikTok: @buzz_master_off', color: '#60a5fa', radius: 14, detail: 'Matching bio link & avatar fingerprint (94% confidence).' },
-        { id: 'leaf_id2', hub: 'hub_identity', name: 'Telegram: @buzz_syndicate', color: '#60a5fa', radius: 14, detail: 'Broadcast channel with 1,400 members.' },
+        { id: 'leaf_id1', hub: 'hub_identity', name: 'TikTok: @buzz_master_off', color: '#60a5fa', radius: 15, detail: 'Matching bio link & avatar fingerprint (94% confidence).' },
+        { id: 'leaf_id2', hub: 'hub_identity', name: 'Telegram: @buzz_syndicate', color: '#60a5fa', radius: 15, detail: 'Broadcast channel with 1,400 members.' },
         
         // Hub 3 (Attack Vectors)
-        { id: 'leaf_v1', hub: 'hub_vectors', name: 'Target: BrandX', color: '#fbbf24', radius: 14, detail: 'Primary target of negative sentiment campaign.' },
-        { id: 'leaf_v2', hub: 'hub_vectors', name: '#BrandGagal Tag', color: '#fbbf24', radius: 14, detail: 'Spam hashtag amplified by click farm.' },
+        { id: 'leaf_v1', hub: 'hub_vectors', name: 'Target: BrandX', color: '#fbbf24', radius: 15, detail: 'Primary target of negative sentiment campaign.' },
+        { id: 'leaf_v2', hub: 'hub_vectors', name: '#BrandGagal Tag', color: '#fbbf24', radius: 15, detail: 'Spam hashtag amplified by click farm.' },
 
         // Hub 4 (Alias)
-        { id: 'leaf_a1', hub: 'hub_alias', name: '@galau_quotes_indo', color: '#a78bfa', radius: 14, detail: 'Previous handle used until Sep 2026.' },
-        { id: 'leaf_a2', hub: 'hub_alias', name: '@kpop_giveaway_store', color: '#a78bfa', radius: 14, detail: 'Original account creation handle in 2025.' },
+        { id: 'leaf_a1', hub: 'hub_alias', name: '@galau_quotes_indo', color: '#a78bfa', radius: 15, detail: 'Previous handle used until Sep 2026.' },
+        { id: 'leaf_a2', hub: 'hub_alias', name: '@kpop_giveaway_store', color: '#a78bfa', radius: 15, detail: 'Original account creation handle in 2025.' },
 
         // Hub 5 (Behavior)
-        { id: 'leaf_b1', hub: 'hub_behavior', name: 'StyleGAN AI Avatar', color: '#f472b6', radius: 14, detail: 'Synthetic face fingerprint matched by AI vision classifier.' },
+        { id: 'leaf_b1', hub: 'hub_behavior', name: 'StyleGAN AI Avatar', color: '#f472b6', radius: 15, detail: 'Synthetic face fingerprint matched by AI vision classifier.' },
 
         // Hub 6 (Deleted)
-        { id: 'leaf_d1', hub: 'hub_deleted', name: 'Cached Post #8819', color: '#34d399', radius: 14, detail: 'Deleted tweet calling for regulator audit.' },
+        { id: 'leaf_d1', hub: 'hub_deleted', name: 'Cached Post #8819', color: '#34d399', radius: 15, detail: 'Deleted tweet calling for regulator audit.' },
     ];
 
     invNodesData = [targetNode, ...hubs, ...leafNodes];
@@ -935,10 +935,10 @@ function initInvestigationGraph() {
     if (typeof d3 === 'undefined') return;
 
     investigationGraphSim = d3.forceSimulation(invNodesData)
-        .force('link', d3.forceLink(invLinksData).id(d => d.id).distance(d => d.source.id === 'target' ? 140 : 70))
-        .force('charge', d3.forceManyBody().strength(-320))
+        .force('link', d3.forceLink(invLinksData).id(d => d.id).distance(d => d.source.id === 'target' ? 165 : 75))
+        .force('charge', d3.forceManyBody().strength(-350))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().radius(d => d.radius + 16))
+        .force('collide', d3.forceCollide().radius(d => d.radius + 18))
         .on('tick', renderInvestigationCanvas);
 
     canvas.onclick = (evt) => {
@@ -949,7 +949,7 @@ function initInvestigationGraph() {
         const clicked = invNodesData.find(n => {
             const dx = n.x - mouseX;
             const dy = n.y - mouseY;
-            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 6;
+            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 8;
         });
 
         if (clicked) {
@@ -960,6 +960,14 @@ function initInvestigationGraph() {
 
     let pulseRadius = 0;
     function renderInvestigationCanvas() {
+        // Enforce boundary bounds on every frame to prevent clipping
+        invNodesData.forEach(d => {
+            if (d.id !== 'target') {
+                d.x = Math.max(d.radius + 50, Math.min(width - d.radius - 50, d.x));
+                d.y = Math.max(d.radius + 40, Math.min(height - d.radius - 40, d.y));
+            }
+        });
+
         ctx.clearRect(0, 0, width, height);
 
         // 1. Links
@@ -968,12 +976,12 @@ function initInvestigationGraph() {
             ctx.moveTo(l.source.x, l.source.y);
             ctx.lineTo(l.target.x, l.target.y);
             if (l.source.id === 'target') {
-                ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.6)';
                 ctx.lineWidth = 2.5;
                 ctx.setLineDash([6, 4]);
             } else {
-                ctx.strokeStyle = 'rgba(144, 153, 176, 0.25)';
-                ctx.lineWidth = 1.2;
+                ctx.strokeStyle = 'rgba(144, 153, 176, 0.3)';
+                ctx.lineWidth = 1.4;
                 ctx.setLineDash([]);
             }
             ctx.stroke();
@@ -981,18 +989,19 @@ function initInvestigationGraph() {
         });
 
         // 2. Pulsing Aura around Central Target Node
-        pulseRadius = (pulseRadius + 0.3) % 24;
+        pulseRadius = (pulseRadius + 0.3) % 28;
         const tNode = invNodesData[0];
         if (tNode) {
             ctx.beginPath();
             ctx.arc(tNode.x, tNode.y, tNode.radius + pulseRadius, 0, 2 * Math.PI);
-            ctx.strokeStyle = `rgba(244, 63, 94, ${1 - pulseRadius / 24})`;
-            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = `rgba(244, 63, 94, ${1 - pulseRadius / 28})`;
+            ctx.lineWidth = 3;
             ctx.stroke();
         }
 
-        // 3. Nodes
+        // 3. Nodes & Labels
         invNodesData.forEach(n => {
+            // Draw Node Circle
             ctx.beginPath();
             ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
             ctx.fillStyle = n.color;
@@ -1001,11 +1010,27 @@ function initInvestigationGraph() {
             ctx.lineWidth = activeInspectedNode && activeInspectedNode.id === n.id ? 4 : 2.5;
             ctx.stroke();
 
-            // Label
-            ctx.fillStyle = n.id === 'target' ? '#ffffff' : '#e2e8f0';
-            ctx.font = n.id === 'target' ? '800 13px Inter, sans-serif' : '600 10px Inter, sans-serif';
+            // Label Text Pill Background
+            const text = n.name;
+            const font = n.id === 'target' ? '800 13px Inter, sans-serif' : '600 10px Inter, sans-serif';
+            ctx.font = font;
+            const textWidth = ctx.measureText(text).width;
+            const textHeight = n.id === 'target' ? 16 : 14;
+            const textY = n.y + n.radius + 14;
+
+            ctx.fillStyle = n.id === 'target' ? 'rgba(244, 63, 94, 0.95)' : 'rgba(19, 21, 27, 0.90)';
+            ctx.beginPath();
+            ctx.roundRect(n.x - textWidth / 2 - 6, textY - 10, textWidth + 12, textHeight, 4);
+            ctx.fill();
+            ctx.strokeStyle = n.id === 'target' ? '#ffffff' : 'rgba(255,255,255,0.15)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            // Text Label
+            ctx.fillStyle = '#ffffff';
             ctx.textAlign = 'center';
-            ctx.fillText(n.name, n.x, n.y + n.radius + 14);
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, n.x, textY - 2);
         });
     }
 }
