@@ -1524,10 +1524,10 @@ body {
     gap: 12px;
 /* Investigation Graph Canvas & Correlation Table ── */
 .investigation-graph-container {
-    height: 360px;
+    height: 460px;
     position: relative;
     overflow: hidden;
-    background: #090a0e;
+    background: #08090d;
     border-radius: var(--r-md);
     border: 1px solid var(--border-default);
     margin-bottom: 16px;

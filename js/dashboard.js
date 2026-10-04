@@ -857,13 +857,17 @@ function initAccountInvestigation() {
     initInvestigationGraph();
 }
 
+let invNodesData = [];
+let invLinksData = [];
+let activeInspectedNode = null;
+
 function initInvestigationGraph() {
     const canvas = document.getElementById('investigation-graph-canvas');
     if (!canvas) return;
 
     const container = canvas.parentElement;
-    const width = container.clientWidth || 800;
-    const height = container.clientHeight || 360;
+    const width = container.clientWidth || 900;
+    const height = container.clientHeight || 460;
     const dpr = window.devicePixelRatio || 1;
 
     canvas.width = width * dpr;
@@ -871,68 +875,143 @@ function initInvestigationGraph() {
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    const invNodes = [
-        { id: 'target', name: '@buzz_master_id', color: '#f43f5e', radius: 24, type: 'Target' },
-        { id: 'bot1', name: '@ring_node_alpha', color: '#ef4444', radius: 16, type: 'Bot' },
-        { id: 'bot2', name: '@polit_bot_09', color: '#ef4444', radius: 16, type: 'Bot' },
-        { id: 'bot3', name: '@click_farm_x', color: '#ef4444', radius: 14, type: 'Bot' },
-        { id: 'hashtag', name: '#BrandGagal', color: '#f59e0b', radius: 20, type: 'Hashtag' },
-        { id: 'brand', name: 'BrandX Target', color: '#3b82f6', radius: 22, type: 'Brand' },
-        { id: 'ig_hub', name: 'IG Account Hub', color: '#c13584', radius: 18, type: 'Platform' },
-        { id: 'tt_hub', name: 'TikTok Channel', color: '#69c9d0', radius: 18, type: 'Platform' },
+    // 1. Central Target Node (@buzz_master_id)
+    const targetNode = {
+        id: 'target',
+        name: '@buzz_master_id',
+        type: 'TARGET_ACCOUNT',
+        color: '#f43f5e',
+        radius: 32,
+        x: width / 2,
+        y: height / 2,
+        fx: width / 2, // Fixed center
+        fy: height / 2,
+        detail: 'Primary investigated handle. High Bot Probability (87%). Proxy IP Node in Jakarta.'
+    };
+
+    // 2. 6 Radial Forensic Hubs (Cabang Bedah Tuntas)
+    const hubs = [
+        { id: 'hub_syndicate', name: '1. Buzzer Syndicate Ring', color: '#ef4444', radius: 22, detail: '28 coordinated bot accounts. Retweet sync lag: 0.4 seconds.' },
+        { id: 'hub_identity', name: '2. Cross-Platform Footprint', color: '#3b82f6', radius: 22, detail: '5 matching digital profiles across TikTok, IG, Telegram, Reddit.' },
+        { id: 'hub_vectors', name: '3. Campaign Attack Target', color: '#f59e0b', radius: 22, detail: 'Target brand: BrandX. Hashtag spam: #BrandGagal (120 post/hr).' },
+        { id: 'hub_alias', name: '4. Historical Alias Vault', color: '#8b5cf6', radius: 22, detail: 'Repurposed from quote farm account @galau_quotes_indo.' },
+        { id: 'hub_behavior', name: '5. Behavioral Automation', color: '#ec4899', radius: 22, detail: '24/7 continuous posting without human sleep gap (02-05 WIB).' },
+        { id: 'hub_deleted', name: '6. Deleted Content Archive', color: '#10b981', radius: 22, detail: '2 deleted posts cached by system before removal. Phishing link flagged.' },
     ];
 
-    const invLinks = [
-        { source: 'target', target: 'bot1', value: 98 },
-        { source: 'target', target: 'bot2', value: 89 },
-        { source: 'target', target: 'bot3', value: 85 },
-        { source: 'target', target: 'hashtag', value: 94 },
-        { source: 'target', target: 'brand', value: 76 },
-        { source: 'target', target: 'ig_hub', value: 92 },
-        { source: 'target', target: 'tt_hub', value: 94 },
-        { source: 'bot1', target: 'hashtag', value: 90 },
-        { source: 'bot2', target: 'hashtag', value: 88 },
+    // 3. Sub-nodes branching out from hubs
+    const leafNodes = [
+        // Hub 1 (Syndicate)
+        { id: 'leaf_bot1', hub: 'hub_syndicate', name: '@ring_node_alpha', color: '#f87171', radius: 14, detail: 'Sub-bot node executing instant retweets.' },
+        { id: 'leaf_bot2', hub: 'hub_syndicate', name: '@polit_bot_09', color: '#f87171', radius: 14, detail: 'Content mirroring bot registered Jan 2026.' },
+        
+        // Hub 2 (Footprint)
+        { id: 'leaf_id1', hub: 'hub_identity', name: 'TikTok: @buzz_master_off', color: '#60a5fa', radius: 14, detail: 'Matching bio link & avatar fingerprint (94% confidence).' },
+        { id: 'leaf_id2', hub: 'hub_identity', name: 'Telegram: @buzz_syndicate', color: '#60a5fa', radius: 14, detail: 'Broadcast channel with 1,400 members.' },
+        
+        // Hub 3 (Attack Vectors)
+        { id: 'leaf_v1', hub: 'hub_vectors', name: 'Target: BrandX', color: '#fbbf24', radius: 14, detail: 'Primary target of negative sentiment campaign.' },
+        { id: 'leaf_v2', hub: 'hub_vectors', name: '#BrandGagal Tag', color: '#fbbf24', radius: 14, detail: 'Spam hashtag amplified by click farm.' },
+
+        // Hub 4 (Alias)
+        { id: 'leaf_a1', hub: 'hub_alias', name: '@galau_quotes_indo', color: '#a78bfa', radius: 14, detail: 'Previous handle used until Sep 2026.' },
+        { id: 'leaf_a2', hub: 'hub_alias', name: '@kpop_giveaway_store', color: '#a78bfa', radius: 14, detail: 'Original account creation handle in 2025.' },
+
+        // Hub 5 (Behavior)
+        { id: 'leaf_b1', hub: 'hub_behavior', name: 'StyleGAN AI Avatar', color: '#f472b6', radius: 14, detail: 'Synthetic face fingerprint matched by AI vision classifier.' },
+
+        // Hub 6 (Deleted)
+        { id: 'leaf_d1', hub: 'hub_deleted', name: 'Cached Post #8819', color: '#34d399', radius: 14, detail: 'Deleted tweet calling for regulator audit.' },
+    ];
+
+    invNodesData = [targetNode, ...hubs, ...leafNodes];
+
+    invLinksData = [
+        ...hubs.map(h => ({ source: 'target', target: h.id, value: 3, label: 'FORENSIC VECTOR' })),
+        ...leafNodes.map(l => ({ source: l.hub, target: l.id, value: 1.5, label: 'SUB-BRANCH' }))
     ];
 
     if (investigationGraphSim) investigationGraphSim.stop();
-
     if (typeof d3 === 'undefined') return;
 
-    investigationGraphSim = d3.forceSimulation(invNodes)
-        .force('link', d3.forceLink(invLinks).id(d => d.id).distance(110))
-        .force('charge', d3.forceManyBody().strength(-280))
+    investigationGraphSim = d3.forceSimulation(invNodesData)
+        .force('link', d3.forceLink(invLinksData).id(d => d.id).distance(d => d.source.id === 'target' ? 140 : 70))
+        .force('charge', d3.forceManyBody().strength(-320))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().radius(d => d.radius + 14))
-        .on('tick', () => {
-            ctx.clearRect(0, 0, width, height);
+        .force('collide', d3.forceCollide().radius(d => d.radius + 16))
+        .on('tick', renderInvestigationCanvas);
 
-            // Draw links
-            invLinks.forEach(l => {
-                ctx.beginPath();
-                ctx.moveTo(l.source.x, l.source.y);
-                ctx.lineTo(l.target.x, l.target.y);
-                ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-            });
+    canvas.onclick = (evt) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = evt.clientX - rect.left;
+        const mouseY = evt.clientY - rect.top;
 
-            // Draw nodes
-            invNodes.forEach(n => {
-                ctx.beginPath();
-                ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
-                ctx.fillStyle = n.color;
-                ctx.fill();
-                ctx.strokeStyle = '#090a0e';
-                ctx.lineWidth = 3;
-                ctx.stroke();
-
-                // Draw label
-                ctx.fillStyle = '#f0f2f7';
-                ctx.font = '600 11px Inter, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText(n.name, n.x, n.y + n.radius + 14);
-            });
+        const clicked = invNodesData.find(n => {
+            const dx = n.x - mouseX;
+            const dy = n.y - mouseY;
+            return Math.sqrt(dx * dx + dy * dy) <= n.radius + 6;
         });
+
+        if (clicked) {
+            activeInspectedNode = clicked;
+            updateNodeInspector(clicked);
+        }
+    };
+
+    let pulseRadius = 0;
+    function renderInvestigationCanvas() {
+        ctx.clearRect(0, 0, width, height);
+
+        // 1. Links
+        invLinksData.forEach(l => {
+            ctx.beginPath();
+            ctx.moveTo(l.source.x, l.source.y);
+            ctx.lineTo(l.target.x, l.target.y);
+            if (l.source.id === 'target') {
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.55)';
+                ctx.lineWidth = 2.5;
+                ctx.setLineDash([6, 4]);
+            } else {
+                ctx.strokeStyle = 'rgba(144, 153, 176, 0.25)';
+                ctx.lineWidth = 1.2;
+                ctx.setLineDash([]);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        });
+
+        // 2. Pulsing Aura around Central Target Node
+        pulseRadius = (pulseRadius + 0.3) % 24;
+        const tNode = invNodesData[0];
+        if (tNode) {
+            ctx.beginPath();
+            ctx.arc(tNode.x, tNode.y, tNode.radius + pulseRadius, 0, 2 * Math.PI);
+            ctx.strokeStyle = `rgba(244, 63, 94, ${1 - pulseRadius / 24})`;
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+        }
+
+        // 3. Nodes
+        invNodesData.forEach(n => {
+            ctx.beginPath();
+            ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+            ctx.fillStyle = n.color;
+            ctx.fill();
+            ctx.strokeStyle = activeInspectedNode && activeInspectedNode.id === n.id ? '#ffffff' : '#08090d';
+            ctx.lineWidth = activeInspectedNode && activeInspectedNode.id === n.id ? 4 : 2.5;
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = n.id === 'target' ? '#ffffff' : '#e2e8f0';
+            ctx.font = n.id === 'target' ? '800 13px Inter, sans-serif' : '600 10px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(n.name, n.x, n.y + n.radius + 14);
+        });
+    }
+}
+
+function updateNodeInspector(node) {
+    alert(`[FORENSIC NODE BEDAH TUNTAS]\nEntitas Node: ${node.name}\nKlasifikasi Detail: ${node.detail || 'Forensic breakdown vector'}`);
 }
 
 function initBotGaugeChart() {
