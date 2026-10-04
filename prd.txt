@@ -1,0 +1,142 @@
+================================================================================
+PRODUCT REQUIREMENT DOCUMENT (PRD)
+PULSEHQ — ENTERPRISE SOCIAL MEDIA MONITORING & STRATEGIC INTELLIGENCE PLATFORM
+================================================================================
+Spec Grade: Tier-1 Enterprise ($500K Benchmark Spec)
+Version   : 2.4.0 (Production Release)
+Status    : Approved / Fully Implemented
+Author    : Enterprise Social Media Monitoring Core Engineering Team
+Workspace : Nazca13/PulseHQ
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY & PRODUCT VISION
+--------------------------------------------------------------------------------
+PulseHQ is a high-density, industrial dark mode Enterprise Social Media 
+Monitoring and Strategic Intelligence Platform designed for Network Operations 
+Centers (NOC), Cyber Reconnaissance Analysts, Government PR Taskforces, and C-Suite 
+Executives.
+
+The platform provides real-time multi-channel firehose ingestion, NLP aspect-based 
+sentiment analysis, automated buzzer/bot authenticity scoring, cross-platform 
+digital footprint mapping, D3 force-directed network graph forensics, interactive 
+geo-spatial intelligence, and an automated executive PDF report generator.
+
+Primary Key Performance Indicator (KPI) Targets:
+- Mean Time to Crisis Detection (MTTD): < 60 seconds
+- Bot & Syndicate Network Audit Confidence: >= 94%
+- Physics Simulation Performance: Locked 60 FPS Canvas rendering
+- Design System: Zero AI-Slop, High-Density Industrial NOC Dark Mode (No Gradients)
+
+--------------------------------------------------------------------------------
+2. TARGET USER PERSONAS & SCENARIOS
+--------------------------------------------------------------------------------
+[Persona 1: NOC Operations Analyst]
+- Primary Focus: 24/7 stream monitoring, identifying negative volume spikes.
+- Core Need: Immediate crisis alert signals, real-time firehose controls, and 
+  uninterrupted visual status dashboards.
+
+[Persona 2: Cyber Forensic & Bot Investigator]
+- Primary Focus: Uncovering buzzer rings, synthetic AI avatars, and sockpuppet networks.
+- Core Need: Bot probability score gauges, 24/7 activity heatmaps, cross-platform 
+  footprint badges, starburst radial forensic D3 network graphs, and historical alias vaults.
+
+[Persona 3: PR & Crisis Communications Director]
+- Primary Focus: Share of Voice (SOV) tracking, competitor benchmark matrices, and 
+  incident escalation mitigation.
+- Core Need: Dynamic SOP crisis playbooks, live incident console outputs, and brand 
+  sentiment radar analysis.
+
+[Persona 4: C-Level Executive]
+- Primary Focus: High-level strategic metrics and report generation for board meetings.
+- Core Need: One-click print-ready PDF executive report builder studio with live 
+  paper preview.
+
+--------------------------------------------------------------------------------
+3. FUNCTIONAL REQUIREMENTS & CORE MODULE SPECIFICATIONS (9 MODULES)
+--------------------------------------------------------------------------------
+
+[MODULE 1: COMMAND CENTER (NOC DASHBOARD)]
+- Feature 1.1: Dynamic Crisis Alert Banner with escalation trigger and dismiss capability.
+- Feature 1.2: Real-time KPI Cards (Total Mentions, Net Sentiment Score, Bot Attack Rate, Reach Potential).
+- Feature 1.3: Predictive Trend Line Chart showing actual vs AI-projected volume.
+- Feature 1.4: Aspect-based Sentiment Breakdown (Product, Support, Pricing, Reputation).
+
+[MODULE 2: ACCOUNT INVESTIGATION & BOT AUDIT]
+- Feature 2.1: Target Account Inspection Header (@buzz_master_id) with IP proxy and registration timestamps.
+- Feature 2.2: Bot & Authenticity Radial Score Gauge (0-100) with dynamic status classification 
+  (Genuine < 30%, Suspicious 30-70%, Bot / Amplification Node > 70%).
+- Feature 2.3: Cross-Platform Digital Footprint Badges (TikTok, Instagram, Telegram, Reddit, LinkedIn).
+- Feature 2.4: Starburst Radial D3 Forensics Canvas Graph with 6 specialized hubs:
+  1. Buzzer Syndicate Ring
+  2. Cross-Platform Footprint
+  3. Campaign Attack Target
+  4. Historical Alias Vault
+  5. Behavioral Automation
+  6. Deleted Content Archive
+- Feature 2.5: 24/7 Hourly Activity Heatmap Grid (7 Days x 24 Hours) for bot schedule audit.
+- Feature 2.6: Entity Correlation & Co-Mention Matrix Table with Pearson correlation index.
+
+[MODULE 3: ENTITY NETWORK GRAPH STUDIO]
+- Feature 3.1: D3.js v7 Physics Engine with Canvas 2D rendering at 60 FPS.
+- Feature 3.2: Multi-Node Category Engine (Brands, KOLs, Media, Topics, Buzzers).
+- Feature 3.3: Interactive HUD Controls (Search query input, Category filter pills, Physics sliders 
+  for Charge Strength, Link Distance, Collide Radius).
+- Feature 3.4: Slide-in Glassmorphic Node Inspector Drawer with platform lists and node isolation actions.
+
+[MODULE 4: LIVE FIREHOSE STREAM]
+- Feature 4.1: Multi-Channel Live Stream Ingestion (X/Twitter, TikTok, Instagram, YouTube, LinkedIn).
+- Feature 4.2: Real-Time Stream Pause/Play toggle to halt scrolling for deep inspection.
+- Feature 4.3: Sentiment and Threat Tag Filters for instant triage.
+
+[MODULE 5: GEO-INTELLIGENCE & REGIONAL HEATMAP]
+- Feature 5.1: Leaflet.js Interactive Geo Map of Indonesia with custom dark tiles.
+- Feature 5.2: Animated Pulse Pin Markers at key regional hubs (Jakarta, Surabaya, Bandung, Medan, Makassar).
+- Feature 5.3: Regional Province Sentiment Breakdown list and volume bar chart.
+
+[MODULE 6: SHARE OF VOICE (SOV) & BENCHMARK MATRIX]
+- Feature 6.1: Head-to-Head Enterprise Benchmark Matrix Table comparing BrandX against Competitors A, B, C.
+- Feature 6.2: SOV % Distribution Donut Chart and Channel Dominance Bar Chart.
+- Feature 6.3: 6-Axis Multi-Dimensional Brand Performance Radar Chart.
+
+[MODULE 7: CRISIS COMMAND CENTER & DYNAMIC PLAYBOOK]
+- Feature 7.1: Threat Level Indicator Card (Level 4 Critical Alert).
+- Feature 7.2: Dynamic SOP Step-by-Step Checklist with active/completed state handlers.
+- Feature 7.3: Live Incident Console Output terminal simulating real-time WIB mitigation logs.
+
+[MODULE 8: EXECUTIVE REPORT BUILDER STUDIO]
+- Feature 8.1: Report Configuration Panel (Date range, included modules, custom notes, format select).
+- Feature 8.2: Live Paper Document Preview simulating actual print output layout.
+- Feature 8.3: Print Engine Overrides (@media print) for clean white-background PDF generation.
+
+[MODULE 9: ENTERPRISE SETTINGS & API KEY VAULT]
+- Feature 9.1: Workspace Profile and Alert Escalation Threshold Configuration.
+- Feature 9.2: API Key Vault with masked key display, rate-limit indicators, and regeneration actions.
+- Feature 9.3: Role-Based Access Control (RBAC) User Team Management Table.
+
+--------------------------------------------------------------------------------
+4. NON-FUNCTIONAL & TECHNICAL REQUIREMENTS
+--------------------------------------------------------------------------------
+- Architecture: Pure HTML5, Vanilla CSS Design System, ES6 Javascript Modular Pattern.
+- External Libraries: Chart.js, D3.js v7, Leaflet.js v1.9.4, Phosphor Icons.
+- Design Aesthetic: Industrial Dark NOC Command Room Display (#0d0e12 base, #13151b surface, 
+  #191c24 card, #252836 border). Solid curated color palette with zero gradients.
+- Responsiveness: Full multi-breakpoint layout system (1280px, 1024px, 768px, 480px) 
+  with dynamic canvas clamp height and horizontal scrolling navigation rail on mobile.
+- Stability Guarantee: Canvas transform reset (setTransform) and D3 force simulation alpha 
+  decay stabilization to prevent frozen or stuck graph states.
+
+--------------------------------------------------------------------------------
+5. FILE MAPPING
+--------------------------------------------------------------------------------
+- /index.html       : Single Page Application shell containing all 9 views
+- /README.md        : Comprehensive Markdown Documentation & System Overview
+- /prd.txt          : Standalone Product Requirement Document (This File)
+- /css/styles.css   : Tier-1 Design System Tokens, Layout Grids, Responsive Breakpoints
+- /css/graph.css    : Obsidian Canvas Overlay, HUD Controls, Glassmorphic Drawers
+- /js/dashboard.js  : Application Controller, State Engine, Chart Initializers, D3 Forensic Canvas
+- /js/graph-engine.js: Entity Network Physics Engine & Canvas 2D Renderer
+- /js/graph-data.js : Enterprise Entity Schemas, Nodes, and Link Network Datasets
+
+================================================================================
+END OF PRD SPECIFICATION
+================================================================================
