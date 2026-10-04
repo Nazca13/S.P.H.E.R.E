@@ -851,10 +851,98 @@ function testApiConn(platform) {
 let botGaugeChartInstance = null;
 let investigationGraphSim = null;
 
+let invGeoMapInstance = null;
+
 function initAccountInvestigation() {
     initBotGaugeChart();
     renderBehavioralHeatmap();
     initInvestigationGraph();
+    initInvGeoMap();
+}
+
+function initInvGeoMap() {
+    const container = document.getElementById('inv-leaflet-map');
+    if (!container) return;
+
+    if (invGeoMapInstance) {
+        invGeoMapInstance.invalidateSize();
+        return;
+    }
+
+    if (typeof L === 'undefined') {
+        container.innerHTML = `<div class="empty-state"><i class="ph ph-warning"></i><p>Leaflet map library loading...</p></div>`;
+        return;
+    }
+
+    // Centered on Indonesia Cluster
+    invGeoMapInstance = L.map('inv-leaflet-map', {
+        center: [-2.5, 115.0],
+        zoom: 5,
+        zoomControl: true,
+        attributionControl: false
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18,
+        subdomains: 'abcd'
+    }).addTo(invGeoMapInstance);
+
+    // Geolocation Target Points
+    const invGeoPoints = [
+        { name: 'Central Target Account (@buzz_master_id)', lat: -6.2088, lng: 106.8456, ip: '103.147.36.192', city: 'D.K.I. Jakarta', role: 'Primary Target Node', color: '#f43f5e', primary: true },
+        { name: 'Sub-Bot Node (@ring_node_alpha)', lat: -7.2575, lng: 112.7521, ip: '180.252.11.84', city: 'Surabaya, Jatim', role: 'Retweet Ring Node', color: '#ef4444' },
+        { name: 'Amplifier Bot (@polit_bot_09)', lat: 3.5952, lng: 98.6722, ip: '114.124.201.12', city: 'Medan, Sumut', role: 'Content Mirroring Bot', color: '#f59e0b' },
+        { name: 'Click Farm Relay (@click_farm_bdg)', lat: -6.9175, lng: 107.6191, ip: '182.253.40.99', city: 'Bandung, Jabar', role: 'Automation Server Pool', color: '#8b5cf6' }
+    ];
+
+    invGeoPoints.forEach(pt => {
+        const iconHtml = `<div class="geo-pulse-pin" style="background:${pt.color}; color:${pt.color}; ${pt.primary ? 'width:18px; height:18px; box-shadow:0 0 12px #f43f5e;' : ''}"></div>`;
+        const customIcon = L.divIcon({
+            html: iconHtml,
+            className: 'custom-inv-geo-pin',
+            iconSize: [pt.primary ? 18 : 14, pt.primary ? 18 : 14],
+            iconAnchor: [pt.primary ? 9 : 7, pt.primary ? 9 : 7]
+        });
+
+        const marker = L.marker([pt.lat, pt.lng], { icon: customIcon }).addTo(invGeoMapInstance);
+
+        const popup = `
+            <div style="padding:6px; font-family:var(--font); min-width:200px;">
+                <div style="font-size:10px; font-weight:800; color:${pt.color}; text-transform:uppercase;">${pt.role}</div>
+                <div style="font-size:13px; font-weight:800; color:var(--text-primary); margin-top:2px;">${pt.name}</div>
+                <div style="font-size:11px; color:var(--blue-500); margin-top:2px;">${pt.city}</div>
+                <div style="font-size:11px; color:var(--text-muted); margin-top:6px; border-top:1px solid var(--border-subtle); padding-top:4px;">
+                    <div>IP Proxy: <strong style="color:var(--text-primary);">${pt.ip}</strong></div>
+                    <div>Coords: <strong style="color:var(--text-secondary);">${pt.lat.toFixed(4)}°, ${pt.lng.toFixed(4)}°</strong></div>
+                </div>
+            </div>
+        `;
+        marker.bindPopup(popup);
+
+        marker.on('click', () => {
+            const latEl = document.getElementById('inv-geo-lat');
+            const lngEl = document.getElementById('inv-geo-lng');
+            const ipEl = document.getElementById('inv-geo-ip');
+            if (latEl) latEl.textContent = `${pt.lat.toFixed(4)}° ${pt.lat >= 0 ? 'N' : 'S'}`;
+            if (lngEl) lngEl.textContent = `${pt.lng.toFixed(4)}° ${pt.lng >= 0 ? 'E' : 'W'}`;
+            if (ipEl) ipEl.textContent = pt.ip;
+        });
+    });
+
+    // Draw dashed connecting lines from target node to sub-bot nodes
+    const primaryPt = invGeoPoints[0];
+    invGeoPoints.slice(1).forEach(pt => {
+        L.polyline([[primaryPt.lat, primaryPt.lng], [pt.lat, pt.lng]], {
+            color: pt.color,
+            weight: 2,
+            opacity: 0.7,
+            dashArray: '6, 6'
+        }).addTo(invGeoMapInstance);
+    });
+
+    setTimeout(() => {
+        if (invGeoMapInstance) invGeoMapInstance.invalidateSize();
+    }, 200);
 }
 
 let invNodesData = [];
