@@ -1414,35 +1414,98 @@
                         </div>
                     </div>
 
-                    <!-- Feature 3: Syndicate Network Mapping (Buzzer Cluster Ring) ── -->
-                    <div class="card col-7">
+                    <!-- Feature 3: Syndicate & Entity Network Mapping + Correlation Suite ── -->
+                    <div class="card col-12">
                         <div class="card-header">
-                            <div class="card-title"><i class="ph ph-share-network"></i> Syndicate Network Mapping (Buzzer Ring #4)</div>
-                            <button class="card-action" onclick="focusNodeInGraph('buzz_master_id')">View in Force Graph</button>
+                            <div class="card-title"><i class="ph ph-share-network"></i> Syndicate Entity Network &amp; Correlation Analysis</div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <button class="btn-ghost" style="padding:4px 10px; font-size:11px;" onclick="initInvestigationGraph()"><i class="ph ph-arrows-clockwise"></i> Reset Layout</button>
+                                <button class="btn-primary" style="padding:4px 10px; font-size:11px;" onclick="switchView('view-network-graph')"><i class="ph ph-graph"></i> Full View</button>
+                            </div>
                         </div>
-                        <div style="display:flex; flex-direction:column; gap:12px;">
-                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
-                                <div>
-                                    <div style="font-size:13px; font-weight:700; color:var(--rose-500);">Identified Syndicate Cluster: Political Amplification Ring B</div>
-                                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Coordinated interaction network of 28 interconnected bot accounts amplifying #BrandGagal hashtag.</div>
-                                </div>
-                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500); font-weight:800;">28 BOT NODES</span>
-                            </div>
 
-                            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
-                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
-                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Hub Node</div>
-                                    <div style="font-size:13px; font-weight:800; color:var(--blue-500); margin-top:2px;">@buzz_master_id</div>
-                                </div>
-                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
-                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Co-amplifiers</div>
-                                    <div style="font-size:13px; font-weight:800; color:var(--purple-500); margin-top:2px;">18 Sub-accounts</div>
-                                </div>
-                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
-                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Daily Retweet Rate</div>
-                                    <div style="font-size:13px; font-weight:800; color:var(--rose-500); margin-top:2px;">4,200 RTs/day</div>
-                                </div>
+                        <!-- Embedded Interactive Force Graph Canvas ── -->
+                        <div class="investigation-graph-container">
+                            <canvas id="investigation-graph-canvas"></canvas>
+                        </div>
+
+                        <!-- Correlation KPI Summary Bar ── -->
+                        <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); gap:10px; margin-bottom:16px;">
+                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Pearson Correlation</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--rose-500); margin-top:2px;">96.8% (Unnatural)</div>
                             </div>
+                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Co-Occurrence Velocity</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--blue-500); margin-top:2px;">3,840 mentions/day</div>
+                            </div>
+                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Sync Burst Window</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--amber-500); margin-top:2px;">0.4s (Script Latency)</div>
+                            </div>
+                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Virality Multiplier</div>
+                                <div style="font-size:16px; font-weight:800; color:var(--purple-500); margin-top:2px;">x18.4 Boost Rate</div>
+                            </div>
+                        </div>
+
+                        <!-- Entity Correlation & Co-Mention Matrix Table ── -->
+                        <div style="font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+                            <span><i class="ph ph-table" style="color:var(--blue-500);"></i> Entity Correlation &amp; Co-Mention Matrix</span>
+                            <span style="font-size:11px; color:var(--text-muted); font-weight:500;">Ranked by Pearson Signal Correlation Index</span>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="correlation-table">
+                                <thead>
+                                    <tr>
+                                        <th>Connected Entity / Node</th>
+                                        <th>Node Classification</th>
+                                        <th>Correlation Index</th>
+                                        <th>Sync Window</th>
+                                        <th>Interaction Vector</th>
+                                        <th>Security Flag</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>@ring_node_alpha</strong></td>
+                                        <td><span class="tag" style="background:var(--rose-100); color:var(--rose-500);">Buzzer Sub-Node</span></td>
+                                        <td><strong style="color:var(--rose-500);">98.4%</strong></td>
+                                        <td>0.4s Sync Burst</td>
+                                        <td>Co-Retweet Ring</td>
+                                        <td><span class="tag" style="background:var(--rose-100); color:var(--rose-500);">HIGH BOT RISK</span></td>
+                                        <td><button class="btn-ghost" style="padding:2px 8px; font-size:10px;" onclick="alert('Isolating node @ring_node_alpha...')">Isolate</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>#BrandGagal</strong></td>
+                                        <td><span class="tag" style="background:var(--amber-100); color:var(--amber-500);">Campaign Hashtag</span></td>
+                                        <td><strong style="color:var(--amber-500);">94.1%</strong></td>
+                                        <td>0.8s Sync Burst</td>
+                                        <td>Keyword Spamming</td>
+                                        <td><span class="tag" style="background:var(--amber-100); color:var(--amber-500);">TARGET HASHTAG</span></td>
+                                        <td><button class="btn-ghost" style="padding:2px 8px; font-size:10px;" onclick="alert('Viewing hashtag stream...')">View Stream</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>@polit_bot_09</strong></td>
+                                        <td><span class="tag" style="background:var(--rose-100); color:var(--rose-500);">Bot Amplifier</span></td>
+                                        <td><strong style="color:var(--rose-500);">89.2%</strong></td>
+                                        <td>1.2s Sync Burst</td>
+                                        <td>Content Mirroring</td>
+                                        <td><span class="tag" style="background:var(--rose-100); color:var(--rose-500);">CLICK FARM</span></td>
+                                        <td><button class="btn-ghost" style="padding:2px 8px; font-size:10px;" onclick="alert('Isolating node @polit_bot_09...')">Isolate</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>BrandX (Our Brand)</strong></td>
+                                        <td><span class="tag" style="background:var(--blue-100); color:var(--blue-500);">Target Entity</span></td>
+                                        <td><strong style="color:var(--blue-500);">76.5%</strong></td>
+                                        <td>Real-time Tag</td>
+                                        <td>Direct Negative Mention</td>
+                                        <td><span class="tag" style="background:var(--blue-100); color:var(--blue-500);">PRIMARY TARGET</span></td>
+                                        <td><button class="btn-ghost" style="padding:2px 8px; font-size:10px;" onclick="switchView('view-command-center')">Dashboard</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
 

@@ -849,10 +849,90 @@ function testApiConn(platform) {
 // ══════════════════════════════════════════════════════════════════════════
 
 let botGaugeChartInstance = null;
+let investigationGraphSim = null;
 
 function initAccountInvestigation() {
     initBotGaugeChart();
     renderBehavioralHeatmap();
+    initInvestigationGraph();
+}
+
+function initInvestigationGraph() {
+    const canvas = document.getElementById('investigation-graph-canvas');
+    if (!canvas) return;
+
+    const container = canvas.parentElement;
+    const width = container.clientWidth || 800;
+    const height = container.clientHeight || 360;
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const invNodes = [
+        { id: 'target', name: '@buzz_master_id', color: '#f43f5e', radius: 24, type: 'Target' },
+        { id: 'bot1', name: '@ring_node_alpha', color: '#ef4444', radius: 16, type: 'Bot' },
+        { id: 'bot2', name: '@polit_bot_09', color: '#ef4444', radius: 16, type: 'Bot' },
+        { id: 'bot3', name: '@click_farm_x', color: '#ef4444', radius: 14, type: 'Bot' },
+        { id: 'hashtag', name: '#BrandGagal', color: '#f59e0b', radius: 20, type: 'Hashtag' },
+        { id: 'brand', name: 'BrandX Target', color: '#3b82f6', radius: 22, type: 'Brand' },
+        { id: 'ig_hub', name: 'IG Account Hub', color: '#c13584', radius: 18, type: 'Platform' },
+        { id: 'tt_hub', name: 'TikTok Channel', color: '#69c9d0', radius: 18, type: 'Platform' },
+    ];
+
+    const invLinks = [
+        { source: 'target', target: 'bot1', value: 98 },
+        { source: 'target', target: 'bot2', value: 89 },
+        { source: 'target', target: 'bot3', value: 85 },
+        { source: 'target', target: 'hashtag', value: 94 },
+        { source: 'target', target: 'brand', value: 76 },
+        { source: 'target', target: 'ig_hub', value: 92 },
+        { source: 'target', target: 'tt_hub', value: 94 },
+        { source: 'bot1', target: 'hashtag', value: 90 },
+        { source: 'bot2', target: 'hashtag', value: 88 },
+    ];
+
+    if (investigationGraphSim) investigationGraphSim.stop();
+
+    if (typeof d3 === 'undefined') return;
+
+    investigationGraphSim = d3.forceSimulation(invNodes)
+        .force('link', d3.forceLink(invLinks).id(d => d.id).distance(110))
+        .force('charge', d3.forceManyBody().strength(-280))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collide', d3.forceCollide().radius(d => d.radius + 14))
+        .on('tick', () => {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw links
+            invLinks.forEach(l => {
+                ctx.beginPath();
+                ctx.moveTo(l.source.x, l.source.y);
+                ctx.lineTo(l.target.x, l.target.y);
+                ctx.strokeStyle = 'rgba(244, 63, 94, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            });
+
+            // Draw nodes
+            invNodes.forEach(n => {
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.radius, 0, 2 * Math.PI);
+                ctx.fillStyle = n.color;
+                ctx.fill();
+                ctx.strokeStyle = '#090a0e';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Draw label
+                ctx.fillStyle = '#f0f2f7';
+                ctx.font = '600 11px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(n.name, n.x, n.y + n.radius + 14);
+            });
+        });
 }
 
 function initBotGaugeChart() {
