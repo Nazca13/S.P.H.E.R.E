@@ -1,0 +1,1536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseHQ — Enterprise Social Intelligence Platform</title>
+    <meta name="description" content="Tier-1 Enterprise Social Media Monitoring & Strategic Intelligence Platform. Real-time multi-channel analytics, NLP sentiment, crisis management, and entity network mapping.">
+
+    <link rel="icon" href="https://api.iconify.design/ph/radar-bold.svg" type="image/svg+xml">
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Enterprise Modular Stylesheets ($500K Spec) -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/graph.css">
+</head>
+<body>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         SIDEBAR — Dark Industrial Navigation Rail
+         ══════════════════════════════════════════════════════════════════ -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="ph-bold ph-radar"></i></div>
+            <span class="logo-text">PulseHQ</span>
+        </div>
+
+        <div class="nav-section">Intelligence</div>
+        <ul class="nav-menu">
+            <li><a class="nav-item active" data-view="view-command-center">
+                <i class="ph ph-squares-four"></i>
+                <span>Command Center</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-account-investigation">
+                <i class="ph ph-user-focus"></i>
+                <span>Account Investigation</span>
+                <span class="nav-badge" style="background:#8b5cf6;">DEEP</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-network-graph">
+                <i class="ph ph-graph"></i>
+                <span>Entity Network</span>
+                <span class="nav-badge">PRO</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-firehose">
+                <i class="ph ph-activity"></i>
+                <span>Live Firehose</span>
+                <span class="nav-badge" style="background:#10b981;">LIVE</span>
+            </a></li>
+        </ul>
+
+        <div class="nav-section">Discovery</div>
+        <ul class="nav-menu">
+            <li><a class="nav-item" data-view="view-network-graph">
+                <i class="ph ph-users-three"></i>
+                <span>KOL &amp; Channels</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-geo-intelligence">
+                <i class="ph ph-map-trifold"></i>
+                <span>Geo-Intelligence</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-sov-matrix">
+                <i class="ph ph-chart-pie-slice"></i>
+                <span>SOV Matrix</span>
+            </a></li>
+        </ul>
+
+        <div class="nav-section">Operations</div>
+        <ul class="nav-menu">
+            <li><a class="nav-item" data-view="view-crisis-playbook">
+                <i class="ph ph-shield-warning"></i>
+                <span>Crisis Playbook</span>
+            </a></li>
+            <li><a class="nav-item" data-view="view-report-builder">
+                <i class="ph ph-file-pdf"></i>
+                <span>Report Builder</span>
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <ul class="nav-menu" style="margin-bottom:0;">
+                <li><a class="nav-item" data-view="view-settings">
+                    <i class="ph ph-gear"></i>
+                    <span>Settings</span>
+                </a></li>
+                <li>
+                    <div class="nav-item" style="cursor:default; gap:10px;">
+                        <div class="live-dot"></div>
+                        <span style="font-size:11px; color:var(--emerald-500); font-weight:600;">12 streams active</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         MAIN CONTAINER
+         ══════════════════════════════════════════════════════════════════ -->
+    <main class="main-container">
+
+        <!-- Header ── -->
+        <header class="header">
+            <div class="search-bar">
+                <i class="ph ph-magnifying-glass" style="color:var(--text-muted); font-size:17px; flex-shrink:0;"></i>
+                <input type="text" id="global-search" placeholder="Boolean: (Brand OR Produk) AND Jakarta NOT Kompetitor...">
+            </div>
+
+            <div class="header-actions">
+                <button class="btn-primary" onclick="switchView('view-network-graph')">
+                    <i class="ph ph-graph"></i> Entity Graph
+                </button>
+
+                <button class="hdr-btn" title="Notifications" id="notif-btn">
+                    <i class="ph ph-bell"></i>
+                    <span class="badge"></span>
+                </button>
+
+                <button class="hdr-btn" title="Export Report">
+                    <i class="ph ph-export"></i>
+                </button>
+
+                <div class="user-chip">
+                    <div style="text-align:right; display:flex; flex-direction:column; gap:1px;">
+                        <span style="font-size:12px; font-weight:600; color:var(--text-primary);">Admin Enterprise</span>
+                        <span style="font-size:11px; color:var(--text-muted);">Indocorp Workspace</span>
+                    </div>
+                    <div class="avatar">A</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 1 — COMMAND CENTER
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-command-center" class="view-panel active">
+            <div class="content-scroll">
+
+                <!-- Crisis Alert Banner ── -->
+                <div class="crisis-banner" id="crisis-banner">
+                    <div class="crisis-icon">
+                        <i class="ph-bold ph-warning"></i>
+                    </div>
+                    <div class="crisis-text">
+                        <div class="crisis-title">Crisis Signal Detected — Tier 2 Alert Active</div>
+                        <div class="crisis-desc">Negative volume spike +340% on X/Twitter: "#BrandGagal" trending in Jakarta, Surabaya, Medan. Escalation threshold breached at 14:32 WIB.</div>
+                    </div>
+                    <button class="crisis-action" id="handle-crisis-btn">Activate Playbook</button>
+                    <button class="hdr-btn" onclick="document.getElementById('crisis-banner').style.display='none'" title="Dismiss" style="background:rgba(244,63,94,0.1); border-color:rgba(244,63,94,0.2); color:var(--rose-500); flex-shrink:0;">
+                        <i class="ph ph-x"></i>
+                    </button>
+                </div>
+
+                <!-- Page Header ── -->
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Command Center</h1>
+                        <p>Real-time strategic intelligence across 12 active data streams</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-ghost"><i class="ph ph-calendar-blank"></i> Last 24 Hours</button>
+                        <button class="btn-ghost"><i class="ph ph-funnel"></i> Filters</button>
+                        <button class="btn-ghost"><i class="ph ph-arrows-clockwise"></i> Refresh</button>
+                    </div>
+                </div>
+
+                <!-- Boolean Builder ── -->
+                <div class="boolean-builder">
+                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; flex-shrink:0;">Active Query:</span>
+                    <span class="bool-chip TERM">BrandX</span>
+                    <span class="bool-chip AND">AND</span>
+                    <span class="bool-chip TERM">Produk</span>
+                    <span class="bool-chip OR">OR</span>
+                    <span class="bool-chip TERM">Review</span>
+                    <span class="bool-chip NOT">NOT</span>
+                    <span class="bool-chip TERM">Kompetitor</span>
+                    <span class="bool-chip NEAR">NEAR/5</span>
+                    <span class="bool-chip TERM">Viral</span>
+                    <button class="bool-add-btn"><i class="ph ph-plus"></i> Add Clause</button>
+                    <div style="margin-left:auto; display:flex; align-items:center; gap:6px;">
+                        <span style="font-size:11px; color:var(--emerald-500); font-weight:600;">
+                            <i class="ph ph-circle-wavy-check"></i> 2.4M results matched
+                        </span>
+                    </div>
+                </div>
+
+                <!-- KPI Row ── -->
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-blue text-blue"><i class="ph ph-chat-circle-dots"></i></div>
+                        <div class="kpi-label">Total Mentions</div>
+                        <div class="kpi-value">2.4M</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend up"><i class="ph-bold ph-arrow-up-right"></i> 12.5%</span>
+                            <span class="kpi-sub">vs. yesterday</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-purple text-purple"><i class="ph ph-user-circle"></i></div>
+                        <div class="kpi-label">Unique Authors</div>
+                        <div class="kpi-value">845K</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend up"><i class="ph-bold ph-arrow-up-right"></i> 5.2%</span>
+                            <span class="kpi-sub">across platforms</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-green text-green"><i class="ph ph-smiley"></i></div>
+                        <div class="kpi-label">Net Sentiment Score</div>
+                        <div class="kpi-value" style="color:var(--emerald-500);">+42.8</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend down"><i class="ph-bold ph-arrow-down-right"></i> 2.1%</span>
+                            <span class="kpi-sub">NPS deteriorating</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-icon bg-red text-red"><i class="ph ph-lightning"></i></div>
+                        <div class="kpi-label">Viral Alert Index</div>
+                        <div class="kpi-value" style="color:var(--rose-500);">86%</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend warn"><i class="ph-bold ph-warning"></i> HIGH</span>
+                            <span class="kpi-sub">action required</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Grid ── -->
+                <div class="bento-grid">
+
+                    <!-- Predictive Trend Engine Chart ── -->
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-trend-up"></i> Predictive Trend Engine</div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="tab-bar" style="margin-bottom:0; width:auto;">
+                                    <button class="tab active" data-trend="7d">7D</button>
+                                    <button class="tab" data-trend="30d">30D</button>
+                                    <button class="tab" data-trend="90d">90D</button>
+                                </div>
+                                <button class="card-action"><i class="ph ph-dots-three"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- SOV Donut ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-chart-pie-slice"></i> Share of Voice</div>
+                            <button class="card-action">View All</button>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:16px; flex:1;">
+                            <div style="position:relative; width:140px; height:140px; flex-shrink:0;">
+                                <canvas id="sovChart"></canvas>
+                                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none;">
+                                    <div style="font-size:18px; font-weight:800; color:var(--text-primary);">42%</div>
+                                    <div style="font-size:10px; font-weight:600; color:var(--text-muted); text-transform:uppercase;">BrandX</div>
+                                </div>
+                            </div>
+                            <div class="sov-legend">
+                                <div class="sov-legend-item">
+                                    <div class="sov-dot" style="background:var(--blue-500);"></div>
+                                    <span class="sov-name">BrandX</span>
+                                    <span class="sov-pct">42%</span>
+                                </div>
+                                <div class="sov-legend-item">
+                                    <div class="sov-dot" style="background:var(--orange-500);"></div>
+                                    <span class="sov-name">Kompetitor A</span>
+                                    <span class="sov-pct">28%</span>
+                                </div>
+                                <div class="sov-legend-item">
+                                    <div class="sov-dot" style="background:var(--purple-500);"></div>
+                                    <span class="sov-name">Kompetitor B</span>
+                                    <span class="sov-pct">18%</span>
+                                </div>
+                                <div class="sov-legend-item">
+                                    <div class="sov-dot" style="background:var(--text-muted);"></div>
+                                    <span class="sov-name">Others</span>
+                                    <span class="sov-pct">12%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Firehose ── -->
+                    <div class="card col-5">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-activity"></i> Live Firehose Stream</div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <div class="live-dot"></div>
+                                <span style="font-size:11px; font-weight:700; color:var(--emerald-500);">LIVE</span>
+                            </div>
+                        </div>
+                        <div class="feed-list" id="firehose-feed">
+                            <!-- Feed items injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Aspect-Based Sentiment ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-brain"></i> Aspect-Based Sentiment (NLP)</div>
+                        </div>
+                        <div class="sentiment-row">
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-label">Kualitas Produk</span>
+                                    <span class="sentiment-score" style="color:var(--emerald-500);">75% Pos</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-pos" style="width:75%;"></div>
+                                    <div class="bar-neu" style="width:15%;"></div>
+                                    <div class="bar-neg" style="width:10%;"></div>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-label">Customer Service</span>
+                                    <span class="sentiment-score" style="color:var(--rose-500);">65% Neg</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-pos" style="width:15%;"></div>
+                                    <div class="bar-neu" style="width:20%;"></div>
+                                    <div class="bar-neg" style="width:65%;"></div>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-label">Harga (Pricing)</span>
+                                    <span class="sentiment-score" style="color:var(--text-secondary);">50% Neu</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-pos" style="width:30%;"></div>
+                                    <div class="bar-neu" style="width:50%;"></div>
+                                    <div class="bar-neg" style="width:20%;"></div>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-label">Kemasan & Pengiriman</span>
+                                    <span class="sentiment-score" style="color:var(--emerald-500);">68% Pos</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-pos" style="width:68%;"></div>
+                                    <div class="bar-neu" style="width:22%;"></div>
+                                    <div class="bar-neg" style="width:10%;"></div>
+                                </div>
+                            </div>
+                            <div class="sentiment-item">
+                                <div class="sentiment-meta">
+                                    <span class="sentiment-label">UX Aplikasi</span>
+                                    <span class="sentiment-score" style="color:var(--amber-500);">40% Mix</span>
+                                </div>
+                                <div class="bar-track">
+                                    <div class="bar-pos" style="width:40%;"></div>
+                                    <div class="bar-neu" style="width:30%;"></div>
+                                    <div class="bar-neg" style="width:30%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:14px; margin-top:16px; padding-top:12px; border-top:1px solid var(--border-subtle); justify-content:center;">
+                            <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); font-weight:500;">
+                                <div style="width:8px; height:8px; border-radius:50%; background:var(--emerald-500);"></div> Positif
+                            </span>
+                            <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); font-weight:500;">
+                                <div style="width:8px; height:8px; border-radius:50%; background:var(--text-muted);"></div> Netral
+                            </span>
+                            <span style="display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-muted); font-weight:500;">
+                                <div style="width:8px; height:8px; border-radius:50%; background:var(--rose-500);"></div> Negatif
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Top KOL / Buzzer ── -->
+                    <div class="card col-3">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-star"></i> Top KOL / Buzzer</div>
+                            <button class="card-action" onclick="switchView('view-network-graph')">View Map</button>
+                        </div>
+                        <div class="kol-list" id="kol-list">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Intent Pulse ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-pulse"></i> Intent Pulse Analysis</div>
+                        </div>
+                        <div class="intent-grid">
+                            <div class="intent-card">
+                                <div class="intent-label">Purchase Intent</div>
+                                <div class="intent-value text-blue">34%</div>
+                                <div class="intent-bar"><div class="intent-fill" style="width:34%; background:var(--blue-500);"></div></div>
+                            </div>
+                            <div class="intent-card">
+                                <div class="intent-label">Complaint Rate</div>
+                                <div class="intent-value text-red">22%</div>
+                                <div class="intent-bar"><div class="intent-fill" style="width:22%; background:var(--rose-500);"></div></div>
+                            </div>
+                            <div class="intent-card">
+                                <div class="intent-label">Recommendation</div>
+                                <div class="intent-value text-green">28%</div>
+                                <div class="intent-bar"><div class="intent-fill" style="width:28%; background:var(--emerald-500);"></div></div>
+                            </div>
+                            <div class="intent-card">
+                                <div class="intent-label">Competitor Switch</div>
+                                <div class="intent-value text-amber">16%</div>
+                                <div class="intent-bar"><div class="intent-fill" style="width:16%; background:var(--amber-500);"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Topic Clusters ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-tag"></i> Topic Clusters</div>
+                            <button class="card-action">Explore</button>
+                        </div>
+                        <div class="cluster-list">
+                            <div class="cluster-item">
+                                <div class="cluster-icon bg-blue text-blue"><i class="ph ph-device-mobile"></i></div>
+                                <div class="cluster-info">
+                                    <div class="cluster-name">Battery Drain Issue</div>
+                                    <div class="cluster-count">14,320 mentions</div>
+                                </div>
+                                <div class="cluster-bar-wrap"><div class="cluster-bar-fill" style="width:88%; background:var(--blue-500);"></div></div>
+                            </div>
+                            <div class="cluster-item">
+                                <div class="cluster-icon bg-red text-red"><i class="ph ph-headset"></i></div>
+                                <div class="cluster-info">
+                                    <div class="cluster-name">CS Slow Response</div>
+                                    <div class="cluster-count">9,814 mentions</div>
+                                </div>
+                                <div class="cluster-bar-wrap"><div class="cluster-bar-fill" style="width:62%; background:var(--rose-500);"></div></div>
+                            </div>
+                            <div class="cluster-item">
+                                <div class="cluster-icon bg-green text-green"><i class="ph ph-tag"></i></div>
+                                <div class="cluster-info">
+                                    <div class="cluster-name">Flash Sale Promo</div>
+                                    <div class="cluster-count">8,200 mentions</div>
+                                </div>
+                                <div class="cluster-bar-wrap"><div class="cluster-bar-fill" style="width:52%; background:var(--emerald-500);"></div></div>
+                            </div>
+                            <div class="cluster-item">
+                                <div class="cluster-icon bg-purple text-purple"><i class="ph ph-star"></i></div>
+                                <div class="cluster-info">
+                                    <div class="cluster-name">Packaging Quality</div>
+                                    <div class="cluster-count">5,490 mentions</div>
+                                </div>
+                                <div class="cluster-bar-wrap"><div class="cluster-bar-fill" style="width:35%; background:var(--purple-500);"></div></div>
+                            </div>
+                            <div class="cluster-item">
+                                <div class="cluster-icon bg-amber text-amber"><i class="ph ph-broadcast"></i></div>
+                                <div class="cluster-info">
+                                    <div class="cluster-name">New Feature Launch</div>
+                                    <div class="cluster-count">4,100 mentions</div>
+                                </div>
+                                <div class="cluster-bar-wrap"><div class="cluster-bar-fill" style="width:26%; background:var(--amber-500);"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Platform Volume ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-chart-bar"></i> Platform Volume</div>
+                        </div>
+                        <div class="chart-container" style="min-height:180px;">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+
+                </div><!-- /bento-grid -->
+            </div><!-- /content-scroll -->
+        </div><!-- /view-command-center -->
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 2 — LIVE FIREHOSE EXPANDED
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-firehose" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Live Firehose Stream</h1>
+                        <p>Real-time multi-channel ingestion across X, Instagram, TikTok, YouTube, LinkedIn, News</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; background:var(--emerald-100); border-radius:var(--r-md);">
+                            <div class="live-dot"></div>
+                            <span style="font-size:12px; font-weight:700; color:var(--emerald-500);">STREAMING LIVE</span>
+                        </div>
+                        <button class="btn-ghost"><i class="ph ph-funnel"></i> Filter</button>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <div class="card col-12">
+                        <div class="card-header">
+                            <div class="tab-bar" style="margin-bottom:0; flex:unset; width:auto;">
+                                <button class="tab active">All Platforms</button>
+                                <button class="tab"><i class="ph ph-x-logo"></i> X/Twitter</button>
+                                <button class="tab"><i class="ph ph-instagram-logo"></i> Instagram</button>
+                                <button class="tab"><i class="ph ph-tiktok-logo"></i> TikTok</button>
+                                <button class="tab"><i class="ph ph-youtube-logo"></i> YouTube</button>
+                                <button class="tab"><i class="ph ph-linkedin-logo"></i> LinkedIn</button>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <select style="background:var(--bg-input); border:1px solid var(--border-default); color:var(--text-secondary); padding:6px 10px; border-radius:var(--r-sm); font-size:12px; font-family:inherit; outline:none;">
+                                    <option>All Sentiment</option>
+                                    <option>Negative Only</option>
+                                    <option>Positive Only</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="feed-list" id="firehose-full-feed" style="max-height:600px;">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 3 — ENTITY NETWORK GRAPH
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-network-graph" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Entity Cross-Platform Network Map</h1>
+                        <p>Force-directed mapping of influencers, multi-channel accounts, and sentiment clusters</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-ghost" onclick="resetGraphView()"><i class="ph ph-arrows-out-cardinal"></i> Reset View</button>
+                        <button class="btn-ghost" id="export-graph-btn"><i class="ph ph-export"></i> Export PNG</button>
+                    </div>
+                </div>
+
+                <!-- Graph Canvas Wrapper ── -->
+                <div class="graph-view-wrapper" id="graph-wrapper">
+
+                    <!-- Top HUD ── -->
+                    <div class="graph-top-bar">
+                        <div class="graph-hud-left">
+                            <button class="graph-glass-btn icon-only" id="gear-toggle-btn" title="Physics Settings">
+                                <i class="ph ph-sliders-horizontal"></i>
+                            </button>
+                            <div class="filter-pills">
+                                <button class="filter-pill active" data-filter="all"><i class="ph ph-squares-four"></i> All</button>
+                                <button class="filter-pill" data-filter="person"><i class="ph ph-user"></i> People</button>
+                                <button class="filter-pill" data-filter="platform"><i class="ph ph-globe"></i> Platforms</button>
+                                <button class="filter-pill" data-filter="topic"><i class="ph ph-lightbulb"></i> Topics</button>
+                            </div>
+                        </div>
+                        <div class="graph-hud-right">
+                            <div class="graph-search-box">
+                                <i class="ph ph-magnifying-glass" style="color:#545b72; font-size:15px;"></i>
+                                <input type="text" id="graph-search-input" placeholder="Search node...">
+                            </div>
+                            <button class="graph-glass-btn icon-only" title="Zoom In" id="zoom-in-btn"><i class="ph ph-plus"></i></button>
+                            <button class="graph-glass-btn icon-only" title="Zoom Out" id="zoom-out-btn"><i class="ph ph-minus"></i></button>
+                            <button class="graph-glass-btn icon-only" title="Fullscreen" id="fullscreen-btn"><i class="ph ph-arrows-out"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Physics Settings Popover ── -->
+                    <div class="settings-popover" id="settings-popover">
+                        <div class="popover-title">
+                            <span><i class="ph ph-sliders"></i> Physics &amp; Layout</span>
+                            <i class="ph ph-x" style="cursor:pointer; font-size:14px;" id="close-popover-btn"></i>
+                        </div>
+                        <div class="slider-group">
+                            <label><span>Repulsion Charge</span><span id="val-charge">-300</span></label>
+                            <input type="range" id="slider-charge" min="-800" max="-50" value="-300">
+                        </div>
+                        <div class="slider-group">
+                            <label><span>Link Distance</span><span id="val-distance">100</span></label>
+                            <input type="range" id="slider-distance" min="30" max="250" value="100">
+                        </div>
+                        <div class="slider-group">
+                            <label><span>Node Collision</span><span id="val-collide">30</span></label>
+                            <input type="range" id="slider-collide" min="10" max="80" value="30">
+                        </div>
+                        <div class="popover-toggle-row">
+                            <span>Show Node Labels</span>
+                            <input type="checkbox" id="check-labels" checked>
+                        </div>
+                        <div class="popover-toggle-row">
+                            <span>Highlight on Hover</span>
+                            <input type="checkbox" id="check-highlight" checked>
+                        </div>
+                    </div>
+
+                    <!-- Canvas ── -->
+                    <div class="canvas-container" id="canvas-container">
+                        <canvas id="graph-canvas"></canvas>
+                    </div>
+
+                    <!-- Entity Drawer (slides in from right) ── -->
+                    <div class="entity-drawer" id="entity-drawer">
+                        <div class="drawer-close-bar">
+                            <span class="drawer-type-badge" id="drawer-type-badge">INFLUENCER</span>
+                            <button class="drawer-close-btn" id="drawer-close-btn"><i class="ph ph-x"></i></button>
+                        </div>
+
+                        <div class="drawer-entity-name" id="drawer-title">Entity Name</div>
+                        <div class="drawer-entity-sub" id="drawer-category">Category</div>
+
+                        <p class="drawer-bio" id="drawer-bio">Select a node to view entity details.</p>
+
+                        <div class="divider"></div>
+
+                        <div class="drawer-section-label">
+                            <i class="ph ph-share-network" style="color:var(--cyan-500);"></i>
+                            Connected Social Accounts
+                        </div>
+                        <div class="platform-list" id="platform-badge-list">
+                            <!-- Dynamically generated -->
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="drawer-section-label"><i class="ph ph-chart-line-up" style="color:var(--blue-500);"></i> Influence Metrics</div>
+                        <div class="stat-group" id="drawer-stats" style="margin-bottom:16px;">
+                            <!-- Dynamically generated -->
+                        </div>
+
+                        <div class="drawer-cta">
+                            <button onclick="alert('Tracking active across connected platforms!')">
+                                <i class="ph ph-radar"></i> Start Real-time Monitor
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Legend HUD ── -->
+                    <div class="graph-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div> Person / KOL</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#ec4899;"></div> Platform</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;"></div> Topic Cluster</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div> Brand</div>
+                    </div>
+
+                    <!-- Stats HUD ── -->
+                    <div class="graph-stats-hud" id="graph-stats-hud">
+                        <div class="hud-stat">
+                            <div class="hud-val" id="hud-nodes">—</div>
+                            <div class="hud-lbl">Nodes</div>
+                        </div>
+                        <div class="hud-stat">
+                            <div class="hud-val" id="hud-links">—</div>
+                            <div class="hud-lbl">Edges</div>
+                        </div>
+                        <div class="hud-stat">
+                            <div class="hud-val" id="hud-clusters">—</div>
+                            <div class="hud-lbl">Clusters</div>
+                        </div>
+                    </div>
+
+                </div><!-- /graph-view-wrapper -->
+
+            </div><!-- /content-scroll -->
+        </div><!-- /view-network-graph -->
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 4 — GEO-INTELLIGENCE & SPATIAL ANALYTICS
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-geo-intelligence" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Geo-Intelligence &amp; Spatial Matrix</h1>
+                        <p>Real-time geographical tracking, regional sentiment density, and province-level mention heatmaps across Indonesia</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-ghost" onclick="initGeoMap()"><i class="ph ph-arrows-clockwise"></i> Recalculate Heatmap</button>
+                        <button class="btn-primary" onclick="alert('Geo alert threshold updated to 500 mentions/hr per province!')"><i class="ph ph-bell-simple-ringing"></i> Set Regional Alert</button>
+                    </div>
+                </div>
+
+                <!-- Region Tabs ── -->
+                <div class="tab-bar" id="geo-region-tabs">
+                    <button class="tab active" data-region="all">All Indonesia</button>
+                    <button class="tab" data-region="jkt">DKI Jakarta</button>
+                    <button class="tab" data-region="jabar">Jawa Barat</button>
+                    <button class="tab" data-region="jatim">Jawa Timur</button>
+                    <button class="tab" data-region="sumut">Sumatera</button>
+                    <button class="tab" data-region="bali">Bali &amp; Nusa</button>
+                    <button class="tab" data-region="sulawesi">Sulawesi</button>
+                    <button class="tab" data-region="kalimantan">Kalimantan</button>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Interactive Leaflet Map ── -->
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-map-pin"></i> Live Spatial Heatmap</div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:11px; color:var(--text-muted); font-weight:600;">Density Layer:</span>
+                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500);">Crisis Hotspots</span>
+                            </div>
+                        </div>
+                        <div class="geo-map-card">
+                            <div id="geo-leaflet-map"></div>
+                        </div>
+                    </div>
+
+                    <!-- Region Leaderboard Card ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-list-numbers"></i> Top Regional Density</div>
+                        </div>
+                        <div class="geo-province-list" id="geo-province-list" style="display:flex; flex-direction:column; gap:8px; max-height:430px; overflow-y:auto;">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Regional Sentiment Breakdown Chart ── -->
+                    <div class="card col-7">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-chart-bar"></i> Major Cities Volume vs Net Sentiment</div>
+                        </div>
+                        <div class="chart-container" style="min-height:220px;">
+                            <canvas id="geoCityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Geo Pulse Signals ── -->
+                    <div class="card col-5">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-broadcast"></i> Localized Issue Feed</div>
+                        </div>
+                        <div class="feed-list" id="geo-local-feed" style="max-height:220px; overflow-y:auto;">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 5 — SHARE OF VOICE (SOV) MATRIX
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-sov-matrix" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Share of Voice (SOV) Matrix</h1>
+                        <p>Head-to-head brand dominance, sentiment share, and cross-channel audience reach benchmarking</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-ghost" onclick="switchView('view-report-builder')"><i class="ph ph-file-pdf"></i> Export SOV Benchmark</button>
+                    </div>
+                </div>
+
+                <!-- SOV Top Summary Cards ── -->
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <div class="brand-chip"><div class="brand-chip-dot" style="background:var(--blue-500);"></div> BrandX (You)</div>
+                        <div class="kpi-value" style="color:var(--blue-500); margin-top:8px;">42.4%</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend up"><i class="ph-bold ph-arrow-up-right"></i> +4.1%</span>
+                            <span class="kpi-sub">Market Dominance</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="brand-chip"><div class="brand-chip-dot" style="background:var(--orange-500);"></div> Kompetitor A</div>
+                        <div class="kpi-value" style="color:var(--orange-500); margin-top:8px;">27.8%</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend down"><i class="ph-bold ph-arrow-down-right"></i> -1.8%</span>
+                            <span class="kpi-sub">Runner-up</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="brand-chip"><div class="brand-chip-dot" style="background:var(--purple-500);"></div> Kompetitor B</div>
+                        <div class="kpi-value" style="color:var(--purple-500); margin-top:8px;">18.1%</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend up"><i class="ph-bold ph-arrow-up-right"></i> +0.5%</span>
+                            <span class="kpi-sub">Challenger</span>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="brand-chip"><div class="brand-chip-dot" style="background:var(--text-muted);"></div> Kompetitor C</div>
+                        <div class="kpi-value" style="color:var(--text-secondary); margin-top:8px;">11.7%</div>
+                        <div class="kpi-footer">
+                            <span class="kpi-trend down"><i class="ph-bold ph-arrow-down-right"></i> -2.8%</span>
+                            <span class="kpi-sub">Niche Share</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- SOV Shift Line Chart ── -->
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-chart-line-up"></i> Share of Voice Historical Shift</div>
+                        </div>
+                        <div class="chart-container" style="min-height:250px;">
+                            <canvas id="sovTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Channel SOV Radar Chart ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-intersect"></i> Channel Dominance Radar</div>
+                        </div>
+                        <div class="chart-container" style="min-height:250px;">
+                            <canvas id="sovRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- $500K Spec Benchmark Matrix Table ── -->
+                    <div class="card col-12">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-table"></i> Head-to-Head Enterprise Benchmark Matrix</div>
+                            <span class="tag" style="background:var(--blue-100); color:var(--blue-500);">TIER-1 AUDIT</span>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="sov-table">
+                                <thead>
+                                    <tr>
+                                        <th>Brand Entity</th>
+                                        <th>Mentions Vol</th>
+                                        <th>Audience Reach</th>
+                                        <th>SOV %</th>
+                                        <th>Net Sentiment</th>
+                                        <th>Virality Ratio</th>
+                                        <th>Influencers Backing</th>
+                                        <th>Dominant Channel</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><div class="brand-chip"><div class="brand-chip-dot" style="background:var(--blue-500);"></div> BrandX (Our Brand)</div></td>
+                                        <td><strong>2,410,500</strong></td>
+                                        <td>18.4M Impr</td>
+                                        <td><span class="tag" style="background:var(--blue-100); color:var(--blue-500); font-weight:700;">42.4%</span></td>
+                                        <td><span style="color:var(--emerald-500); font-weight:700;">+42.8</span></td>
+                                        <td>86% (High)</td>
+                                        <td>142 Top KOLs</td>
+                                        <td><i class="ph ph-x-logo"></i> X / Twitter</td>
+                                    </tr>
+                                    <tr>
+                                        <td><div class="brand-chip"><div class="brand-chip-dot" style="background:var(--orange-500);"></div> Kompetitor A</div></td>
+                                        <td>1,580,200</td>
+                                        <td>12.1M Impr</td>
+                                        <td>27.8%</td>
+                                        <td><span style="color:var(--emerald-500);">+28.4</span></td>
+                                        <td>64% (Mid)</td>
+                                        <td>88 Top KOLs</td>
+                                        <td><i class="ph ph-instagram-logo"></i> Instagram</td>
+                                    </tr>
+                                    <tr>
+                                        <td><div class="brand-chip"><div class="brand-chip-dot" style="background:var(--purple-500);"></div> Kompetitor B</div></td>
+                                        <td>1,028,000</td>
+                                        <td>8.9M Impr</td>
+                                        <td>18.1%</td>
+                                        <td><span style="color:var(--rose-500);">-12.3</span></td>
+                                        <td>71% (Mid)</td>
+                                        <td>45 Top KOLs</td>
+                                        <td><i class="ph ph-tiktok-logo"></i> TikTok</td>
+                                    </tr>
+                                    <tr>
+                                        <td><div class="brand-chip"><div class="brand-chip-dot" style="background:var(--text-muted);"></div> Kompetitor C</div></td>
+                                        <td>664,100</td>
+                                        <td>4.2M Impr</td>
+                                        <td>11.7%</td>
+                                        <td><span style="color:var(--text-secondary);">+14.0</span></td>
+                                        <td>38% (Low)</td>
+                                        <td>19 Top KOLs</td>
+                                        <td><i class="ph ph-youtube-logo"></i> YouTube</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 6 — CRISIS COMMAND CENTER & PLAYBOOK
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-crisis-playbook" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Crisis Command &amp; Automated Playbook</h1>
+                        <p>Real-time threat level monitoring, escalation matrix, and automated SOP response workflow engine</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-primary" style="background:var(--rose-500);" onclick="triggerCrisisAction()"><i class="ph-bold ph-warning"></i> Execute Crisis Protocol</button>
+                    </div>
+                </div>
+
+                <!-- Threat Meter HUD ── -->
+                <div class="threat-level-card" style="margin-bottom:20px;">
+                    <div class="threat-badge-huge">TIER 2 ALERT</div>
+                    <div style="flex:1;">
+                        <div style="font-size:16px; font-weight:800; color:var(--text-primary);">MODERATE CRISIS LEVEL DETECTED</div>
+                        <div style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Automated SLA Escalation Clock is running: <strong>00:44:12 remaining</strong> to dispatch C-Suite update.</div>
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-item">
+                            <div class="stat-val text-red">+340%</div>
+                            <div class="stat-lbl">Volume Velocity</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val text-red">-62%</div>
+                            <div class="stat-lbl">Net Sentiment</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val text-amber">Low</div>
+                            <div class="stat-lbl">Bot Risk</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Active Crisis SOP Checklist ── -->
+                    <div class="card col-7">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-tree-structure"></i> Automated SOP Response Workflow</div>
+                            <span class="tag" style="background:var(--rose-100); color:var(--rose-500);">ACTIVE WORKFLOW</span>
+                        </div>
+                        <div class="sop-checklist">
+                            <div class="sop-step-card done">
+                                <div class="sop-num"><i class="ph ph-check"></i></div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Step 1: Automatic Detection &amp; Budget Freeze</div>
+                                    <div style="font-size:11px; color:var(--text-muted);">Paid ad campaigns on X and Meta auto-paused to prevent ad placement next to negative keywords.</div>
+                                </div>
+                                <span class="tag" style="background:var(--emerald-100); color:var(--emerald-500);">COMPLETED</span>
+                            </div>
+
+                            <div class="sop-step-card active">
+                                <div class="sop-num">2</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Step 2: PR Dispatch &amp; C-Suite Emergency Notification</div>
+                                    <div style="font-size:11px; color:var(--text-secondary);">Brief generated and sent to Corporate Communications &amp; Legal teams.</div>
+                                </div>
+                                <button class="btn-primary" style="padding:6px 12px; font-size:11px;" onclick="executeStep2(this)"><i class="ph ph-paper-plane-tilt"></i> Resend Alert</button>
+                            </div>
+
+                            <div class="sop-step-card">
+                                <div class="sop-num">3</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Step 3: Generate Official Clarification Statement &amp; FAQ</div>
+                                    <div style="font-size:11px; color:var(--text-muted);">Synthesize key customer concerns into approved response text.</div>
+                                </div>
+                                <button class="btn-ghost" style="padding:6px 12px; font-size:11px;" onclick="executeStep3()"><i class="ph ph-sparkle"></i> Generate</button>
+                            </div>
+
+                            <div class="sop-step-card">
+                                <div class="sop-num">4</div>
+                                <div style="flex:1;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text-primary);">Step 4: Deploy Counter-Narrative via Partner KOLs</div>
+                                    <div style="font-size:11px; color:var(--text-muted);">Activate Tier-1 trusted tech influencers to clarify app fix timeline.</div>
+                                </div>
+                                <button class="btn-ghost" style="padding:6px 12px; font-size:11px;" onclick="alert('KOL Dispatch queued for Tier-1 accounts.')"><i class="ph ph-broadcast"></i> Queue KOLs</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Crisis Console Output ── -->
+                    <div class="card col-5">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-terminal-window"></i> Crisis Incident Console Log</div>
+                            <button class="card-action" onclick="document.getElementById('crisis-console').innerHTML='[SYSTEM] Log cleared.'">Clear</button>
+                        </div>
+                        <div class="crisis-console-output" id="crisis-console">
+[14:32:01 WIB] ALERT BREACH: #BrandGagal volume crossed 1,000 mentions/hr.
+[14:32:05 WIB] AUTO-RULE: Ad Spend API trigger executed -> 4 Meta campaigns paused.
+[14:33:12 WIB] NLP SENTIMENT: Negative ratio -62.4% (Primary issue: CS Response Delay).
+[14:35:00 WIB] SLA TIMER: 60-minute executive briefing countdown started.
+                        </div>
+                        <div style="margin-top:12px; display:flex; gap:8px;">
+                            <input type="text" id="crisis-input" class="form-input" style="flex:1; font-size:12px;" placeholder="Simulate incident note or action...">
+                            <button class="btn-primary" style="padding:6px 14px; font-size:12px;" onclick="postCrisisConsoleNote()">Post Log</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 7 — REPORT BUILDER STUDIO
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-report-builder" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Enterprise Report Builder Studio</h1>
+                        <p>Generate, customize, and export executive intelligence reports in print-ready layout or PDF</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-ghost" onclick="window.print()"><i class="ph ph-printer"></i> Print / PDF Export</button>
+                        <button class="btn-primary" onclick="triggerReportDownload()"><i class="ph ph-download-simple"></i> Download PDF Document</button>
+                    </div>
+                </div>
+
+                <div class="report-studio-container">
+                    <!-- Left Controls ── -->
+                    <div class="report-controls-card">
+                        <div class="form-group">
+                            <label class="form-label">Report Preset</label>
+                            <select class="form-select" id="report-preset-select" onchange="updateReportPreview()">
+                                <option value="executive">Executive Daily Intelligence Brief</option>
+                                <option value="crisis">Crisis Audit & Incident Post-Mortem</option>
+                                <option value="sov">Monthly Competitor SOV Benchmark</option>
+                                <option value="kol">KOL & Influencer Campaign ROI</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Timeframe Window</label>
+                            <select class="form-select" id="report-time-select" onchange="updateReportPreview()">
+                                <option value="24h">Last 24 Hours</option>
+                                <option value="7d" selected>Last 7 Days</option>
+                                <option value="30d">Last 30 Days</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Report Title</label>
+                            <input type="text" class="form-input" id="report-title-input" value="Strategic Intelligence Briefing" oninput="updateReportTitle(this.value)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Include Modules</label>
+                            <div class="checkbox-list">
+                                <label class="checkbox-item"><input type="checkbox" checked onchange="toggleReportModule('mod-kpi', this.checked)"> Executive KPI Summary</label>
+                                <label class="checkbox-item"><input type="checkbox" checked onchange="toggleReportModule('mod-chart', this.checked)"> Mentions &amp; Sentiment Trend</label>
+                                <label class="checkbox-item"><input type="checkbox" checked onchange="toggleReportModule('mod-sov', this.checked)"> Share of Voice Benchmark</label>
+                                <label class="checkbox-item"><input type="checkbox" checked onchange="toggleReportModule('mod-geo', this.checked)"> Geo Spatial Breakdown</label>
+                                <label class="checkbox-item"><input type="checkbox" checked onchange="toggleReportModule('mod-crisis', this.checked)"> Active Crisis Audit</label>
+                            </div>
+                        </div>
+
+                        <div style="border-top:1px solid var(--border-subtle); padding-top:12px; margin-top:auto;">
+                            <button class="btn-primary" style="width:100%; justify-content:center;" onclick="updateReportPreview()"><i class="ph ph-arrows-clockwise"></i> Re-Generate Live Preview</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Live Paper Preview ── -->
+                    <div class="report-paper-preview" id="report-paper-canvas">
+                        <div class="report-doc-header">
+                            <div>
+                                <div class="report-doc-title" id="preview-doc-title">Strategic Intelligence Briefing</div>
+                                <div class="report-doc-subtitle">PulseHQ Enterprise Social Media Monitoring Platform · Tier-1 Executive Spec</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:12px; font-weight:700; color:var(--blue-500);">CONFIDENTIAL</div>
+                                <div style="font-size:11px; color:var(--text-muted);" id="preview-doc-date">Generated: Oct 4, 2026</div>
+                            </div>
+                        </div>
+
+                        <!-- Module 1: Executive KPI ── -->
+                        <div class="report-section-box" id="mod-kpi">
+                            <div class="report-section-title"><i class="ph ph-squares-four"></i> Executive Performance Metrics</div>
+                            <div class="kpi-row" style="grid-template-columns: repeat(4, 1fr); gap:12px;">
+                                <div>
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Total Mentions</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--blue-500);">2.41M</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Share of Voice</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--emerald-500);">42.4%</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Net Sentiment</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--emerald-500);">+42.8</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Crisis Index</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--rose-500);">Tier 2 (Moderate)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Module 2: Chart Preview ── -->
+                        <div class="report-section-box" id="mod-chart">
+                            <div class="report-section-title"><i class="ph ph-chart-line-up"></i> Mentions Volume &amp; Sentiment Trajectory</div>
+                            <div style="height:180px; position:relative;">
+                                <canvas id="reportPreviewChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Module 3: Executive Summary Prose ── -->
+                        <div class="report-section-box" id="mod-sov">
+                            <div class="report-section-title"><i class="ph ph-article"></i> Strategic Findings &amp; Market Position</div>
+                            <p style="font-size:13px; line-height:1.6; color:var(--text-secondary);">
+                                BrandX maintains dominant market leadership with a 42.4% Share of Voice across monitored digital channels. Positive customer sentiment remains healthy (+42.8 net score), driven primarily by strong performance in product quality and unboxing content on TikTok and Instagram.
+                            </p>
+                        </div>
+
+                        <!-- Module 4: Geo & Crisis ── -->
+                        <div class="report-section-box" id="mod-crisis">
+                            <div class="report-section-title"><i class="ph ph-shield-warning"></i> Crisis Audit Summary</div>
+                            <p style="font-size:13px; line-height:1.6; color:var(--text-secondary);">
+                                1 Tier-2 active alert detected on X/Twitter regarding customer support response delay. Automated SOP protocol initiated with paid ad budget freeze applied smoothly. Recommended next step: Deploy approved clarification brief via social channels.
+                            </p>
+                        </div>
+
+                        <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text-muted);">
+                            <span>Prepared for Indocorp Workspace</span>
+                            <span>PulseHQ Strategic Analytics Engine v4.2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 8 — SYSTEM SETTINGS & ENTERPRISE INTEGRATIONS
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-settings" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Enterprise Settings &amp; Integrations</h1>
+                        <p>Workspace configuration, API ingestion streams, crisis thresholds, and team role management</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="btn-primary" onclick="saveEnterpriseSettings()"><i class="ph ph-floppy-disk"></i> Save Settings</button>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- General Workspace Card ── -->
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-buildings"></i> Workspace Environment</div>
+                            <span class="tag" style="background:var(--blue-100); color:var(--blue-500);">ENTERPRISE TIER-1</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:14px;">
+                            <div class="form-group">
+                                <label class="form-label">Workspace Name</label>
+                                <input type="text" class="form-input" value="Indocorp Strategic Intelligence">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Organization ID</label>
+                                <input type="text" class="form-input" value="ORG-IND-8829" readonly style="color:var(--text-muted);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Timezone &amp; Region</label>
+                                <select class="form-select">
+                                    <option>(UTC+07:00) Asia/Jakarta (WIB)</option>
+                                    <option>(UTC+08:00) Asia/Makassar (WITA)</option>
+                                    <option>(UTC+09:00) Asia/Jayapura (WIT)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ingestion API Keys Card ── -->
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-key"></i> Data Streams &amp; API Keys</div>
+                            <span class="tag" style="background:var(--emerald-100); color:var(--emerald-500);">12 ACTIVE STREAMS</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div class="form-group">
+                                <label class="form-label"><i class="ph ph-x-logo"></i> X / Twitter Enterprise Firehose v2</label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="password" class="form-input" value="sk_firehose_live_99218a034f" style="flex:1;">
+                                    <button class="btn-ghost" style="padding:6px 12px; font-size:11px;" onclick="testApiConn('X/Twitter')">Test</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><i class="ph ph-instagram-logo"></i> Instagram Graph API Token</label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="password" class="form-input" value="EAAG8827a1993bfkks001" style="flex:1;">
+                                    <button class="btn-ghost" style="padding:6px 12px; font-size:11px;" onclick="testApiConn('Instagram')">Test</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label"><i class="ph ph-tiktok-logo"></i> TikTok Commercial Content API</label>
+                                <div style="display:flex; gap:8px;">
+                                    <input type="password" class="form-input" value="tt_comm_api_key_77192" style="flex:1;">
+                                    <button class="btn-ghost" style="padding:6px 12px; font-size:11px;" onclick="testApiConn('TikTok')">Test</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Crisis Alert & Webhooks Card ── -->
+                    <div class="card col-7">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-shield-warning"></i> Crisis Detection Rules &amp; Webhooks</div>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:14px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                                <div class="form-group">
+                                    <label class="form-label">Velocity Spike Threshold</label>
+                                    <input type="text" class="form-input" value="+300% / hour">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Net Sentiment Breach Limit</label>
+                                    <input type="text" class="form-input" value="-50% Net Score">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Emergency Telegram / Slack Webhook URL</label>
+                                <input type="text" class="form-input" value="https://api.telegram.org/bot771294821:AAF9918/sendMessage?chat_id=-100827">
+                            </div>
+                            <div class="checkbox-list" style="margin-top:4px;">
+                                <label class="checkbox-item"><input type="checkbox" checked> Auto-pause paid ad campaigns upon Tier-2 crisis breach</label>
+                                <label class="checkbox-item"><input type="checkbox" checked> Dispatch instant SMS alert to PR Crisis Response Team</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team & Access Control ── -->
+                    <div class="card col-5">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-users"></i> Team &amp; Access Roles</div>
+                            <button class="card-action" onclick="alert('Invite link copied to clipboard!')">+ Invite Member</button>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:var(--bg-input); border-radius:var(--r-sm);">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div class="avatar" style="width:28px; height:28px; font-size:11px;">AD</div>
+                                    <div>
+                                        <div style="font-size:12px; font-weight:700;">Admin Enterprise</div>
+                                        <div style="font-size:10px; color:var(--text-muted);">admin@indocorp.co.id</div>
+                                    </div>
+                                </div>
+                                <span class="tag" style="background:var(--purple-100); color:var(--purple-500);">SUPER ADMIN</span>
+                            </div>
+
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:var(--bg-input); border-radius:var(--r-sm);">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div class="avatar" style="width:28px; height:28px; font-size:11px; background:var(--emerald-500);">PR</div>
+                                    <div>
+                                        <div style="font-size:12px; font-weight:700;">Rina Kusuma</div>
+                                        <div style="font-size:10px; color:var(--text-muted);">rina.pr@indocorp.co.id</div>
+                                    </div>
+                                </div>
+                                <span class="tag" style="background:var(--blue-100); color:var(--blue-500);">PR DIRECTOR</span>
+                            </div>
+
+                            <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:var(--bg-input); border-radius:var(--r-sm);">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <div class="avatar" style="width:28px; height:28px; font-size:11px; background:var(--amber-500);">AN</div>
+                                    <div>
+                                        <div style="font-size:12px; font-weight:700;">Budi Santoso</div>
+                                        <div style="font-size:10px; color:var(--text-muted);">budi.data@indocorp.co.id</div>
+                                    </div>
+                                </div>
+                                <span class="tag" style="background:var(--bg-card); color:var(--text-secondary);">ANALYST</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════════════════════════════
+             VIEW 9 — ACCOUNT INVESTIGATION & BOT AUDIT
+             ══════════════════════════════════════════════════════════════ -->
+        <div id="view-account-investigation" class="view-panel">
+            <div class="content-scroll">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h1>Account Investigation &amp; Bot Audit</h1>
+                        <p>Deep-dive authenticity scoring, cross-platform digital footprints, buzzer syndicate mapping, and deleted content vault</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="text" id="target-handle-input" class="form-input" value="@buzz_master_id" style="width:200px;" placeholder="Enter @handle...">
+                            <button class="btn-primary" onclick="runAccountAudit()"><i class="ph ph-user-focus"></i> Analyze Account</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Target Profile Summary Header Card ── -->
+                <div class="investigation-target-card">
+                    <div style="display:flex; align-items:center; gap:16px;">
+                        <div class="avatar" style="width:48px; height:48px; font-size:18px; background:var(--rose-500); font-weight:800;">BM</div>
+                        <div>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:18px; font-weight:800; color:var(--text-primary);" id="target-name-display">Buzz Master ID</span>
+                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500); font-size:11px; font-weight:700;">HIGH BOT RISK</span>
+                            </div>
+                            <div style="font-size:12px; color:var(--text-muted); margin-top:2px;" id="target-handle-display">@buzz_master_id · Created March 2021 · Location: Jakarta / IP Proxy</div>
+                        </div>
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-item">
+                            <div class="stat-val text-blue">14,200</div>
+                            <div class="stat-lbl">Followers</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val text-muted">13,850</div>
+                            <div class="stat-lbl">Following</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val text-red">1.02</div>
+                            <div class="stat-lbl">Reciprocal Ratio</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-grid">
+                    <!-- Feature 1: Bot & Authenticity Scoring (Gauge + Diagnostics) ── -->
+                    <div class="card col-4">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-shield-check"></i> Bot &amp; Authenticity Scoring</div>
+                        </div>
+                        <div style="text-align:center; padding:10px 0;">
+                            <div class="bot-gauge-wrapper">
+                                <canvas id="botScoreGaugeChart"></canvas>
+                                <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none;">
+                                    <div style="font-size:26px; font-weight:900; color:var(--rose-500);">87%</div>
+                                    <div style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Bot Probability</div>
+                                </div>
+                            </div>
+                            <div style="margin-top:12px;">
+                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500); font-weight:800; font-size:12px; padding:4px 10px;">
+                                    CLASSIFICATION: AUTOMATED BOT / CLICK FARM
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">AI Diagnostic Indicators:</div>
+                        <div style="display:flex; flex-direction:column; gap:6px; font-size:12px;">
+                            <div style="display:flex; align-items:center; justify-content:space-between; color:var(--rose-500);">
+                                <span><i class="ph ph-warning-circle"></i> Username Numeric Suffix</span>
+                                <strong>HIGH RISK</strong>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; color:var(--rose-500);">
+                                <span><i class="ph ph-lightning"></i> Burst Posting (120+ post/hr)</span>
+                                <strong>SUSPICIOUS</strong>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; color:var(--amber-500);">
+                                <span><i class="ph ph-image"></i> AI Synthetic Avatar Fingerprint</span>
+                                <strong>MATCHED</strong>
+                            </div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; color:var(--rose-500);">
+                                <span><i class="ph ph-arrows-clockwise"></i> Reciprocal Follow Ring</span>
+                                <strong>UNNATURAL</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2: Cross-Platform Footprint (Digital Footprint Matches) ── -->
+                    <div class="card col-8">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-fingerprint"></i> Cross-Platform Footprint Discovery</div>
+                            <span class="tag" style="background:var(--blue-100); color:var(--blue-500);">5 MATCHES FOUND</span>
+                        </div>
+                        <div class="footprint-grid">
+                            <div class="footprint-chip active">
+                                <i class="ph-bold ph-x-logo" style="font-size:20px; color:var(--text-primary);"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">@buzz_master_id</div>
+                                    <div style="font-size:10px; color:var(--blue-500);">X / Twitter · 100% Match</div>
+                                </div>
+                                <span class="tag" style="background:var(--blue-100); color:var(--blue-500); font-size:10px;">Primary</span>
+                            </div>
+
+                            <div class="footprint-chip active">
+                                <i class="ph-bold ph-tiktok-logo" style="font-size:20px; color:#69c9d0;"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">@buzz_master_official</div>
+                                    <div style="font-size:10px; color:var(--emerald-500);">TikTok · 94% Match</div>
+                                </div>
+                                <a href="#" onclick="alert('Opening linked TikTok profile...')" style="color:var(--text-muted);"><i class="ph ph-arrow-square-out"></i></a>
+                            </div>
+
+                            <div class="footprint-chip active">
+                                <i class="ph-bold ph-instagram-logo" style="font-size:20px; color:#c13584;"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">@buzz_master.id</div>
+                                    <div style="font-size:10px; color:var(--emerald-500);">Instagram · 92% Match</div>
+                                </div>
+                                <a href="#" onclick="alert('Opening linked Instagram profile...')" style="color:var(--text-muted);"><i class="ph ph-arrow-square-out"></i></a>
+                            </div>
+
+                            <div class="footprint-chip active">
+                                <i class="ph-bold ph-telegram-logo" style="font-size:20px; color:#0088cc;"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">@buzz_syndicate_channel</div>
+                                    <div style="font-size:10px; color:var(--amber-500);">Telegram · 88% Match</div>
+                                </div>
+                                <a href="#" onclick="alert('Opening Telegram channel link...')" style="color:var(--text-muted);"><i class="ph ph-arrow-square-out"></i></a>
+                            </div>
+
+                            <div class="footprint-chip active">
+                                <i class="ph-bold ph-reddit-logo" style="font-size:20px; color:#ff4500;"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">u/buzz_master99</div>
+                                    <div style="font-size:10px; color:var(--emerald-500);">Reddit · 85% Match</div>
+                                </div>
+                                <a href="#" onclick="alert('Opening Reddit profile...')" style="color:var(--text-muted);"><i class="ph ph-arrow-square-out"></i></a>
+                            </div>
+
+                            <div class="footprint-chip inactive">
+                                <i class="ph-bold ph-linkedin-logo" style="font-size:20px; color:#0a66c2;"></i>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700;">No Account Found</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">LinkedIn · Unmatched</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3: Syndicate Network Mapping (Buzzer Cluster Ring) ── -->
+                    <div class="card col-7">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-share-network"></i> Syndicate Network Mapping (Buzzer Ring #4)</div>
+                            <button class="card-action" onclick="focusNodeInGraph('buzz_master_id')">View in Force Graph</button>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:12px;">
+                            <div style="background:var(--bg-input); padding:10px 14px; border-radius:var(--r-sm); border:1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-size:13px; font-weight:700; color:var(--rose-500);">Identified Syndicate Cluster: Political Amplification Ring B</div>
+                                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Coordinated interaction network of 28 interconnected bot accounts amplifying #BrandGagal hashtag.</div>
+                                </div>
+                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500); font-weight:800;">28 BOT NODES</span>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Hub Node</div>
+                                    <div style="font-size:13px; font-weight:800; color:var(--blue-500); margin-top:2px;">@buzz_master_id</div>
+                                </div>
+                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Co-amplifiers</div>
+                                    <div style="font-size:13px; font-weight:800; color:var(--purple-500); margin-top:2px;">18 Sub-accounts</div>
+                                </div>
+                                <div style="background:var(--bg-input); padding:10px; border-radius:var(--r-sm); border:1px solid var(--border-subtle);">
+                                    <div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Daily Retweet Rate</div>
+                                    <div style="font-size:13px; font-weight:800; color:var(--rose-500); margin-top:2px;">4,200 RTs/day</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4: Behavioral Activity Heatmap (24/7 Grid) ── -->
+                    <div class="card col-5">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-clock-afternoon"></i> Behavioral Activity Heatmap (24/7 Matrix)</div>
+                            <span class="tag" style="background:var(--rose-100); color:var(--rose-500);">NO SLEEP CYCLE</span>
+                        </div>
+                        <div class="heatmap-grid-container" id="behavioral-heatmap-grid">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div style="font-size:11px; color:var(--rose-500); margin-top:8px; line-height:1.4;">
+                            <i class="ph ph-warning"></i> <strong>Anomalous 24/7 Automation Detected:</strong> Continuous activity recorded between 02:00 – 05:00 WIB (lack of human sleep pattern confirms script/click-farm automation).
+                        </div>
+                    </div>
+
+                    <!-- Feature 5: Historical Alias & Deleted Content Vault ── -->
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-clock-counter-clockwise"></i> Historical Alias Log</div>
+                            <span class="tag" style="background:var(--blue-100); color:var(--blue-500);">3 RENAMES DETECTED</span>
+                        </div>
+                        <div class="alias-timeline-list">
+                            <div class="alias-item">
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary);">@buzz_master_id (Current Handle)</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">Renamed on Oct 1, 2026 · Target campaign start</div>
+                                </div>
+                                <span class="tag" style="background:var(--rose-100); color:var(--rose-500);">CAMPAIGN BOT</span>
+                            </div>
+                            <div class="alias-item" style="border-left-color:var(--amber-500);">
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary);">@galau_quotes_indo</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">Used May 2026 – Sep 2026 · Repurposed account</div>
+                                </div>
+                                <span class="tag" style="background:var(--amber-100); color:var(--amber-500);">QUOTE FARM</span>
+                            </div>
+                            <div class="alias-item" style="border-left-color:var(--text-muted);">
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700; color:var(--text-primary);">@kpop_giveaway_store</div>
+                                    <div style="font-size:10px; color:var(--text-muted);">Original creation handle · Jan 2025</div>
+                                </div>
+                                <span class="tag" style="background:var(--bg-input); color:var(--text-muted);">ORIGIN</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature 5 Part 2: Deleted Content Vault ── -->
+                    <div class="card col-6">
+                        <div class="card-header">
+                            <div class="card-title"><i class="ph ph-trash"></i> Deleted Content Vault (System Cached)</div>
+                            <span class="tag" style="background:var(--rose-100); color:var(--rose-500);">CACHED ARCHIVE</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:10px; max-height:220px; overflow-y:auto;">
+                            <div style="padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:var(--r-sm);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--rose-500);"><i class="ph ph-x-circle"></i> Deleted 2 hours after posting</span>
+                                    <span style="font-size:10px; color:var(--text-muted);">Oct 4, 14:10 WIB</span>
+                                </div>
+                                <p style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+                                    "#BrandGagal harus di-usut tuntas oleh regulator! Layanan bobrok tidak ada respon CS!"
+                                </p>
+                                <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Cached Image Hash: <code>img_cache_88192a.png</code></div>
+                            </div>
+
+                            <div style="padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:var(--r-sm);">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                    <span style="font-size:11px; font-weight:700; color:var(--rose-500);"><i class="ph ph-x-circle"></i> Deleted 4 hours after posting</span>
+                                    <span style="font-size:10px; color:var(--text-muted);">Oct 4, 11:22 WIB</span>
+                                </div>
+                                <p style="font-size:12px; color:var(--text-secondary); line-height:1.4;">
+                                    "Join giveaway hp gratis klik link ini bit.ly/giveaway-brand-x2026"
+                                </p>
+                                <div style="font-size:10px; color:var(--text-muted); margin-top:4px;">Phishing Link Fingerprint Flagged</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main><!-- /main-container -->
+
+    <!-- Enterprise Modular Scripts -->
+    <script src="js/graph-data.js"></script>
+    <script src="js/graph-engine.js"></script>
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>
