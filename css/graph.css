@@ -439,10 +439,13 @@
 
 /* ── Responsive graph ── */
 @media (max-width: 768px) {
-    .graph-view-wrapper { height: calc(100vh - 200px); border-radius: 12px; }
-    .graph-top-bar { flex-direction: column; gap: 8px; align-items: stretch; }
-    .graph-hud-right { flex-direction: column; }
+    .graph-view-wrapper { height: clamp(340px, 55vh, 520px); min-height: 340px; border-radius: 12px; }
+    .graph-top-bar { flex-direction: column; gap: 8px; align-items: stretch; background: rgba(13, 14, 18, 0.9); padding: 8px; border-radius: 10px; }
+    .graph-hud-left { flex-wrap: wrap; gap: 6px; }
+    .graph-hud-right { flex-direction: row; flex-wrap: wrap; gap: 6px; }
     .graph-search-box { width: 100%; }
-    .entity-drawer { width: 100%; right: -100%; }
+    .filter-pills { overflow-x: auto; width: 100%; padding: 2px; }
+    .filter-pill { padding: 4px 8px; font-size: 11px; }
+    .entity-drawer { width: 100%; right: -100%; border-left: none; }
     .graph-legend, .graph-stats-hud { display: none; }
 }

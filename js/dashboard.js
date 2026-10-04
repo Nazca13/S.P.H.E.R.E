@@ -866,9 +866,27 @@ function initInvestigationGraph() {
     if (!canvas) return;
 
     const container = canvas.parentElement;
-    const width = container.clientWidth || 900;
-    const height = container.clientHeight || 600;
-    const dpr = window.devicePixelRatio || 1;
+    let width = container.clientWidth || 800;
+    let height = container.clientHeight || 420;
+    let dpr = window.devicePixelRatio || 1;
+
+    function resizeCanvas() {
+        if (!container || !canvas) return;
+        width = container.clientWidth || 800;
+        height = container.clientHeight || 420;
+        dpr = window.devicePixelRatio || 1;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+        if (targetNode) {
+            targetNode.fx = width / 2;
+            targetNode.fy = height / 2;
+        }
+        if (investigationGraphSim) {
+            investigationGraphSim.force('center', d3.forceCenter(width / 2, height / 2));
+            investigationGraphSim.alpha(0.3).restart();
+        }
+    }
 
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -881,7 +899,7 @@ function initInvestigationGraph() {
         name: '@buzz_master_id',
         type: 'TARGET_ACCOUNT',
         color: '#f43f5e',
-        radius: 36,
+        radius: 26,
         x: width / 2,
         y: height / 2,
         fx: width / 2, // Fixed center
@@ -891,37 +909,37 @@ function initInvestigationGraph() {
 
     // 2. 6 Radial Forensic Hubs (Cabang Bedah Tuntas)
     const hubs = [
-        { id: 'hub_syndicate', name: '1. Buzzer Syndicate Ring', color: '#ef4444', radius: 24, detail: '28 coordinated bot accounts. Retweet sync lag: 0.4 seconds.' },
-        { id: 'hub_identity', name: '2. Cross-Platform Footprint', color: '#3b82f6', radius: 24, detail: '5 matching digital profiles across TikTok, IG, Telegram, Reddit.' },
-        { id: 'hub_vectors', name: '3. Campaign Attack Target', color: '#f59e0b', radius: 24, detail: 'Target brand: BrandX. Hashtag spam: #BrandGagal (120 post/hr).' },
-        { id: 'hub_alias', name: '4. Historical Alias Vault', color: '#8b5cf6', radius: 24, detail: 'Repurposed from quote farm account @galau_quotes_indo.' },
-        { id: 'hub_behavior', name: '5. Behavioral Automation', color: '#ec4899', radius: 24, detail: '24/7 continuous posting without human sleep gap (02-05 WIB).' },
-        { id: 'hub_deleted', name: '6. Deleted Content Archive', color: '#10b981', radius: 24, detail: '2 deleted posts cached by system before removal. Phishing link flagged.' },
+        { id: 'hub_syndicate', name: '1. Buzzer Syndicate Ring', color: '#ef4444', radius: 18, detail: '28 coordinated bot accounts. Retweet sync lag: 0.4 seconds.' },
+        { id: 'hub_identity', name: '2. Cross-Platform Footprint', color: '#3b82f6', radius: 18, detail: '5 matching digital profiles across TikTok, IG, Telegram, Reddit.' },
+        { id: 'hub_vectors', name: '3. Campaign Attack Target', color: '#f59e0b', radius: 18, detail: 'Target brand: BrandX. Hashtag spam: #BrandGagal (120 post/hr).' },
+        { id: 'hub_alias', name: '4. Historical Alias Vault', color: '#8b5cf6', radius: 18, detail: 'Repurposed from quote farm account @galau_quotes_indo.' },
+        { id: 'hub_behavior', name: '5. Behavioral Automation', color: '#ec4899', radius: 18, detail: '24/7 continuous posting without human sleep gap (02-05 WIB).' },
+        { id: 'hub_deleted', name: '6. Deleted Content Archive', color: '#10b981', radius: 18, detail: '2 deleted posts cached by system before removal. Phishing link flagged.' },
     ];
 
     // 3. Sub-nodes branching out from hubs
     const leafNodes = [
         // Hub 1 (Syndicate)
-        { id: 'leaf_bot1', hub: 'hub_syndicate', name: '@ring_node_alpha', color: '#f87171', radius: 15, detail: 'Sub-bot node executing instant retweets.' },
-        { id: 'leaf_bot2', hub: 'hub_syndicate', name: '@polit_bot_09', color: '#f87171', radius: 15, detail: 'Content mirroring bot registered Jan 2026.' },
+        { id: 'leaf_bot1', hub: 'hub_syndicate', name: '@ring_node_alpha', color: '#f87171', radius: 12, detail: 'Sub-bot node executing instant retweets.' },
+        { id: 'leaf_bot2', hub: 'hub_syndicate', name: '@polit_bot_09', color: '#f87171', radius: 12, detail: 'Content mirroring bot registered Jan 2026.' },
         
         // Hub 2 (Footprint)
-        { id: 'leaf_id1', hub: 'hub_identity', name: 'TikTok: @buzz_master_off', color: '#60a5fa', radius: 15, detail: 'Matching bio link & avatar fingerprint (94% confidence).' },
-        { id: 'leaf_id2', hub: 'hub_identity', name: 'Telegram: @buzz_syndicate', color: '#60a5fa', radius: 15, detail: 'Broadcast channel with 1,400 members.' },
+        { id: 'leaf_id1', hub: 'hub_identity', name: 'TikTok: @buzz_master_off', color: '#60a5fa', radius: 12, detail: 'Matching bio link & avatar fingerprint (94% confidence).' },
+        { id: 'leaf_id2', hub: 'hub_identity', name: 'Telegram: @buzz_syndicate', color: '#60a5fa', radius: 12, detail: 'Broadcast channel with 1,400 members.' },
         
         // Hub 3 (Attack Vectors)
-        { id: 'leaf_v1', hub: 'hub_vectors', name: 'Target: BrandX', color: '#fbbf24', radius: 15, detail: 'Primary target of negative sentiment campaign.' },
-        { id: 'leaf_v2', hub: 'hub_vectors', name: '#BrandGagal Tag', color: '#fbbf24', radius: 15, detail: 'Spam hashtag amplified by click farm.' },
+        { id: 'leaf_v1', hub: 'hub_vectors', name: 'Target: BrandX', color: '#fbbf24', radius: 12, detail: 'Primary target of negative sentiment campaign.' },
+        { id: 'leaf_v2', hub: 'hub_vectors', name: '#BrandGagal Tag', color: '#fbbf24', radius: 12, detail: 'Spam hashtag amplified by click farm.' },
 
         // Hub 4 (Alias)
-        { id: 'leaf_a1', hub: 'hub_alias', name: '@galau_quotes_indo', color: '#a78bfa', radius: 15, detail: 'Previous handle used until Sep 2026.' },
-        { id: 'leaf_a2', hub: 'hub_alias', name: '@kpop_giveaway_store', color: '#a78bfa', radius: 15, detail: 'Original account creation handle in 2025.' },
+        { id: 'leaf_a1', hub: 'hub_alias', name: '@galau_quotes_indo', color: '#a78bfa', radius: 12, detail: 'Previous handle used until Sep 2026.' },
+        { id: 'leaf_a2', hub: 'hub_alias', name: '@kpop_giveaway_store', color: '#a78bfa', radius: 12, detail: 'Original account creation handle in 2025.' },
 
         // Hub 5 (Behavior)
-        { id: 'leaf_b1', hub: 'hub_behavior', name: 'StyleGAN AI Avatar', color: '#f472b6', radius: 15, detail: 'Synthetic face fingerprint matched by AI vision classifier.' },
+        { id: 'leaf_b1', hub: 'hub_behavior', name: 'StyleGAN AI Avatar', color: '#f472b6', radius: 12, detail: 'Synthetic face fingerprint matched by AI vision classifier.' },
 
         // Hub 6 (Deleted)
-        { id: 'leaf_d1', hub: 'hub_deleted', name: 'Cached Post #8819', color: '#34d399', radius: 15, detail: 'Deleted tweet calling for regulator audit.' },
+        { id: 'leaf_d1', hub: 'hub_deleted', name: 'Cached Post #8819', color: '#34d399', radius: 12, detail: 'Deleted tweet calling for regulator audit.' },
     ];
 
     invNodesData = [targetNode, ...hubs, ...leafNodes];
@@ -935,11 +953,13 @@ function initInvestigationGraph() {
     if (typeof d3 === 'undefined') return;
 
     investigationGraphSim = d3.forceSimulation(invNodesData)
-        .force('link', d3.forceLink(invLinksData).id(d => d.id).distance(d => d.source.id === 'target' ? 165 : 75))
-        .force('charge', d3.forceManyBody().strength(-350))
+        .force('link', d3.forceLink(invLinksData).id(d => d.id).distance(d => d.source.id === 'target' ? 120 : 55))
+        .force('charge', d3.forceManyBody().strength(-240))
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide().radius(d => d.radius + 18))
+        .force('collide', d3.forceCollide().radius(d => d.radius + 12))
         .on('tick', renderInvestigationCanvas);
+
+    window.addEventListener('resize', resizeCanvas);
 
     // Mouse drag & hover interaction setup
     let draggedNode = null;
